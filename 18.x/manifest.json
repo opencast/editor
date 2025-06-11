@@ -1,0 +1,15 @@
+{
+  "short_name": "Opencast Editor",
+  "name": "Web-based cutting tool for Opencast",
+  "icons": [
+    {
+      "src": "favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    }
+  ],
+  "start_url": ".",
+  "display": "minimal-ui",
+  "theme_color": "#000000",
+  "background_color": "#ffffff"
+}
