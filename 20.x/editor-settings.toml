@@ -1,0 +1,50 @@
+####
+# Opencast Stand-alone Video Editor
+##
+
+# This file contains configuration meant for development and demonstration.
+# New features should be enabled in here to make testing easier.
+
+# ⚠️  Please do not use this for production deployments.
+
+
+# Pick a default event identifier which should be on stable.opencast.org
+id = 'ID-dual-stream-demo'
+
+# Callback to stable.opencast.org
+allowedCallbackPrefixes = ["https://stable.opencast.org"]
+callbackUrl = "https://stable.opencast.org"
+callbackSystem = "OPENCAST"
+
+[opencast]
+# Connect to stable.opencast.org and use the default demo user
+url = 'https://stable.opencast.org'
+name = "admin"
+password = "opencast"
+
+
+[metadata]
+show = true
+
+[trackSelection]
+show = true
+atLeastOneVideo = true
+atMostTwoVideos = true
+
+[subtitles]
+show = true
+mainFlavor = "captions"
+
+[subtitles.languages]
+german = { lang = "de-DE" }
+english = { lang = "en-US", type = "closed-caption" }
+spanish = { lang = "es" }
+
+
+[subtitles.icons]
+"de-DE" = "DE"
+"en-US" = "EN"
+"es" = "ES"
+
+[thumbnail]
+show = true

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta name="git-commit" content="bf18f70204b38d882e4a211d93ff58dbaf9fed10">
+    <meta name="build-date" content="2026-08-11T09:07:05.445Z">
+    <meta charset="utf-8" />
+    <link rel="icon" href="/19.x/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#000000" />
+    <meta name="description"
+          content="Opencast's video editor" />
+    <!--
+      manifest.json provides metadata used when your web app is installed on a
+      user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
+    -->
+    <link rel="manifest" href="/19.x/manifest.json" />
+    <title>Opencast Editor</title>
+    <style>
+      /* These styles are only used for the initial loading indicator */
+      @keyframes loading-rotation {
+        0% { transform: rotate(0); }
+        100% { transform: rotate(360deg); }
+      }
+      html, body {
+          margin: 0;
+          padding: 0;
+          height: 100%;
+          min-height: 100%;
+      }
+      .loading-indicator {
+        width: 100vw;
+        height: 100vh;
+        justify-content: center;
+        align-items: center;
+        display: flex;
+      }
+      .loading-indicator > svg {
+        max-width: 120px;
+        max-height: 120px;
+        width: 30vw;
+        height: 30vh;
+        animation: 2s linear infinite none loading-rotation;
+      }
+      .loading-indicator > svg > circle {
+        fill: none;
+        stroke: black;
+        stroke-width: 10;
+        stroke-dasharray: 167; /* 2/3 of circumference */
+        stroke-linecap: round;
+      }
+    </style>
+    <script type="module" crossorigin src="/19.x/assets/index-yHs0NhVx.js"></script>
+    <link rel="stylesheet" crossorigin href="/19.x/assets/index-CQ4qWiAe.css">
+  </head>
+  <body>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="root">
+      <!-- Loading indicator, shown until React starts rendering -->
+      <div class="loading-indicator">
+        <svg viewbox="0 0 100 100">
+          <circle cx="50" cy="50" r="40" />
+        </svg>
+      </div>
+    </div>
+  </body>
+</html>
