@@ -114,7 +114,7 @@ jobs:
       - name: Generate index.html
         working-directory: editor-test
         run: |
-          echo '<html><head><link rel=stylesheet type=text/css href=index.css /></head><body><div class="head-container"><img src=https://editor.opencast.org/develop/opencast-editor.svg /></div><div class="text-container"><p>Test deployment for the latest development versions of the Opencast editor.The branches listed here correspond to Opencast's own branches.</br><b>Please select a version.</b></p></div><ul>' > index.html
+          echo '<html><head><link rel=stylesheet type=text/css href=assets/index.css /></head><body><div class="head-container"><img src=https://editor.opencast.org/develop/opencast-editor.svg /></div><div class="text-container"><p>Test deployment for the latest development versions of the Opencast editor.The branches listed here correspond to Opencast's own branches.</br><b>Please select a version.</b></p></div><ul>' > index.html
           find . -maxdepth 2 -name '*_*' -type d \
             | sort -r \
             | sed 's/^\(.*\)$/<li><a href=\1>\1<\/a><\/li>/' >> index.html
