@@ -137,7 +137,6 @@ const WorkflowSelection: React.FC = () => {
           <SaveButton
             isTransitionToEnd={true}
             text={t("workflowSelection.startProcessing-button")}
-            startWorkflow={true}
           />,
           saveStatus,
           saveError,
@@ -154,7 +153,6 @@ const WorkflowSelection: React.FC = () => {
           <SaveButton
             isTransitionToEnd={true}
             text={t("workflowSelection.startProcessing-button")}
-            startWorkflow={true}
           />,
           saveStatus,
           saveError,
