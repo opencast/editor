@@ -68,6 +68,25 @@ export interface ExtendedSubtitleCue extends SubtitleCue {
   textPosition : string
 }
 
+export interface CommentReply {
+  id: number | string;
+  creationDate: string;
+  author: string;  // username of the author
+  text: string;
+  pending?: boolean;  // UI-only: true if not yet saved to backend
+}
+
+export interface Comment {
+  id: number | string;
+  creationDate: string;
+  author: string;  // username of the author
+  reason: string;
+  text: string;
+  resolvedStatus: boolean;
+  replies: CommentReply[];
+  pending?: boolean;  // UI-only: true if not yet saved to backend
+}
+
 export interface PostEditArgument {
   segments: Segment[]
   tracks: Track[]
@@ -76,6 +95,7 @@ export interface PostEditArgument {
   chapters: SubtitlesFromOpencast[]
   workflow?: [{id: string}]
   metadata: Catalog[]
+  comments: Comment[]
 }
 
 // Use respective i18n keys as values
@@ -86,6 +106,7 @@ export enum MainMenuStateNames {
   subtitles = "mainMenu.subtitles-button",
   chapters = "mainMenu.chapters-button",
   thumbnail = "mainMenu.thumbnail-button",
+  comments = "mainMenu.comments-button",
   finish = "mainMenu.finish-button",
   keyboardControls = "mainMenu.keyboard-controls-button",
 }

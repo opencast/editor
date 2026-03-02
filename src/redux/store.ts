@@ -8,6 +8,7 @@ import metadataReducer from "./metadataSlice";
 import subtitleReducer from "./subtitleSlice";
 import chapterReducer from "./chapterSlice";
 import errorReducer from "./errorSlice";
+import commentReducer from "./commentSlice";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 
 export const store = configureStore({
@@ -21,6 +22,7 @@ export const store = configureStore({
     subtitleState: subtitleReducer,
     chapterState: chapterReducer,
     errorState: errorReducer,
+    commentState: commentReducer,
   },
 });
 

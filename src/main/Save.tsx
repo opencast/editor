@@ -31,6 +31,10 @@ import {
   selectSubtitles, selectHasChanges as selectSubtitleHasChanges,
   setHasChanges as subtitleSetHasChanges,
 } from "../redux/subtitleSlice";
+import {
+  selectComments,
+  setHasChanges as commentSetHasChanges,
+} from "../redux/commentSlice";
 import { serializeSubtitle } from "../util/utilityFunctions";
 import { useTheme } from "../themes";
 import { ThemedTooltip } from "./Tooltip";
@@ -131,6 +135,7 @@ export const SaveButton: React.FC<{
   const subtitles = useAppSelector(selectSubtitles);
   const chapters = useAppSelector(selectChapters);
   const metadata = useAppSelector(selectAllCatalogs);
+  const comments = useAppSelector(selectComments);
   const selectedWorkflowId = useAppSelector(selectSelectedWorkflowId);
   const workflowStatus = useAppSelector(selectStatus);
   const theme = useTheme();
@@ -173,6 +178,7 @@ export const SaveButton: React.FC<{
       subtitles: prepareSubtitles(subtitles),
       chapters: prepareSubtitles(chapters),
       metadata: metadata,
+      comments: comments,
       workflow: startWorkflow && selectedWorkflowId ? [{ id: selectedWorkflowId }] : undefined,
     }));
   };
@@ -186,6 +192,7 @@ export const SaveButton: React.FC<{
       dispatch(videoSetHasChanges(false));
       dispatch(metadataSetHasChanges(false));
       dispatch(subtitleSetHasChanges(false));
+      dispatch(commentSetHasChanges(false));
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, workflowStatus]);

@@ -48,3 +48,6 @@ spanish = { lang = "es" }
 
 [thumbnail]
 show = true
+
+[comments]
+show = true
