@@ -12,6 +12,51 @@ export default defineConfig(() => {
     base: process.env.PUBLIC_URL || "",
     server: {
       open: true,
+      proxy: {
+        '/editor/': {
+          target: 'http://localhost:8080',
+          changeOrigin: true,
+          selfHandleResponse: true,
+          configure: (proxy, _options) => {
+            proxy.on('proxyRes', (proxyRes, req, res) => {
+              const contentType = proxyRes.headers['content-type'] || '';
+              // Rewrite JSON responses to replace absolute Opencast URLs with relative paths
+              if (contentType.includes('application/json') || contentType.includes('text/json')) {
+                let body = '';
+                proxyRes.on('data', (chunk: Buffer) => { body += chunk.toString(); });
+                proxyRes.on('end', () => {
+                  body = body.replaceAll('http://localhost:8080', '');
+                  res.writeHead(proxyRes.statusCode || 200, {
+                    ...proxyRes.headers,
+                    'content-length': Buffer.byteLength(body),
+                  });
+                  res.end(body);
+                });
+              } else {
+                res.writeHead(proxyRes.statusCode || 200, proxyRes.headers);
+                proxyRes.pipe(res);
+              }
+            });
+          },
+        },
+        '/info': {
+          target: 'http://localhost:8080',
+          changeOrigin: true,
+        },
+        '/api': {
+          target: 'http://localhost:8080',
+          changeOrigin: true,
+        },
+        '/static': {
+          target: 'http://localhost:8080',
+          changeOrigin: true,
+          auth: 'admin:opencast',
+        },
+        '/assets': {
+          target: 'http://localhost:8080',
+          changeOrigin: true,
+        },
+      },
     },
     build: {
       outDir: "build",

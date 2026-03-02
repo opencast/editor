@@ -18,7 +18,9 @@ callbackSystem = "OPENCAST"
 
 [opencast]
 # Connect to develop.opencast.org and use the default demo user
-url = 'https://develop.opencast.org'
+# url = 'https://develop.opencast.org'
+# When using the vite proxy, leave url empty so requests go through the dev server
+url = ''
 name = "admin"
 password = "opencast"
 
