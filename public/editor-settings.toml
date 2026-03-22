@@ -50,4 +50,4 @@ spanish = { lang = "es" }
 show = true
 
 [comments]
-show = true
+show = false
