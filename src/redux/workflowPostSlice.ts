@@ -21,6 +21,7 @@ const convertComments = (comments: Comment[]) => {
     id: typeof comment.id === "string" ? 0 : comment.id,
     creationDate: comment.creationDate,
     author: comment.author,
+    displayName: comment.displayName,
     reason: comment.reason,
     text: comment.text,
     resolvedStatus: comment.resolvedStatus,
@@ -28,6 +29,7 @@ const convertComments = (comments: Comment[]) => {
       id: typeof reply.id === "string" ? 0 : reply.id,
       creationDate: reply.creationDate,
       author: reply.author,
+      displayName: reply.displayName,
       text: reply.text,
     })),
   }));

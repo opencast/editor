@@ -72,6 +72,7 @@ export interface CommentReply {
   id: number | string;
   creationDate: string;
   author: string;  // username of the author
+  displayName: string;
   text: string;
   pending?: boolean;  // UI-only: true if not yet saved to backend
 }
@@ -80,6 +81,7 @@ export interface Comment {
   id: number | string;
   creationDate: string;
   author: string;  // username of the author
+  displayName: string;
   reason: string;
   text: string;
   resolvedStatus: boolean;

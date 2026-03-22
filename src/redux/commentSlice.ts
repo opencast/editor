@@ -52,6 +52,7 @@ const commentSlice = createSlice({
         id: nanoid(),
         creationDate: new Date().toISOString(),
         author: "",  // Backend stamps the actual author via SecurityService
+        displayName: "",
         reason: action.payload.reason,
         text: action.payload.text,
         resolvedStatus: false,
@@ -74,6 +75,7 @@ const commentSlice = createSlice({
           id: nanoid(),
           creationDate: new Date().toISOString(),
           author: "",  // Backend stamps the actual author via SecurityService
+          displayName: "",
           text: action.payload.text,
           pending: true,  // Mark as pending until saved to backend
         };

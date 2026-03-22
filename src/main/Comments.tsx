@@ -362,7 +362,7 @@ const Comments: React.FC = () => {
               <div css={commentHeaderStyle}>
                 <div css={css({ display: "flex", flexDirection: "column", flex: 1 })}>
                   <div css={css({ display: "flex", alignItems: "center", gap: "8px" })}>
-                    <span css={authorStyle}>{comment.author}</span>
+                    <span css={authorStyle}>{comment.displayName}</span>
                     {comment.pending && (
                       <Badge color="#ff9800" tooltip={t("comments.pending-tooltip")}>
                         {t("comments.pending")}
@@ -411,7 +411,7 @@ const Comments: React.FC = () => {
                 <div key={reply.id} css={replyCardStyle}>
                   <div css={commentHeaderStyle}>
                     <div css={css({ display: "flex", alignItems: "center", gap: "8px", flex: 1 })}>
-                      <span css={authorStyle}>{reply.author}</span>
+                      <span css={authorStyle}>{reply.displayName}</span>
                       {reply.pending && (
                         <Badge color="#ff9800" tooltip={t("comments.pending-tooltip")}>
                           {t("comments.pending")}
@@ -503,7 +503,7 @@ const Comments: React.FC = () => {
             placeholder={
               t("comments.reply-placeholder") +
               " @" +
-              originalComment.author +
+              originalComment.displayName +
               "..."
             }
           />
