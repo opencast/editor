@@ -95,7 +95,7 @@ const MainMenu: React.FC = () => {
         bottomText={t(MainMenuStateNames.thumbnail)}
         ariaLabelText={t(MainMenuStateNames.thumbnail)}
       />}
-      {settings.comments?.show && <MainMenuButton
+      {settings.comments.show && <MainMenuButton
         Icon={LuMessageCircle}
         stateName={MainMenuStateNames.comments}
         bottomText={t(MainMenuStateNames.comments)}

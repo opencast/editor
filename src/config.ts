@@ -79,7 +79,7 @@ interface iSettings {
     mainFlavor: string,
     defaultVideoFlavor: Flavor | undefined,
   };
-    comments?: {
+    comments: {
       show: boolean,
     },
 }
