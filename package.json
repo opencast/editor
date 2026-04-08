@@ -8,7 +8,7 @@
     "@emotion/styled": "^11.14.1",
     "@fontsource-variable/roboto-flex": "^5.2.6",
     "@iarna/toml": "^2.2.5",
-    "@mui/material": "^6.4.1",
+    "@mui/material": "^9.0.0",
     "@opencast/appkit": "^0.4.0",
     "@reduxjs/toolkit": "^2.8.2",
     "@types/react": "^18.3.12",
