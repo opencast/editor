@@ -71,7 +71,7 @@ export const basicButtonStyle = (theme: Theme) => css({
  * CSS for deactivated buttons
  */
 export const deactivatedButtonStyle = css({
-  borderRadius: "10px",
+  borderRadius: "5px",
   cursor: "pointer",
   opacity: "0.6",
   // Flex position child elements
@@ -83,7 +83,7 @@ export const deactivatedButtonStyle = css({
 });
 
 /**
- * CSS for nagivation styled buttons
+ * CSS for navigation styled buttons
  */
 export const navigationButtonStyle = (theme: Theme) => css({
   width: "200px",

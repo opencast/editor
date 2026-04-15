@@ -7,6 +7,7 @@
       "chapters-button": "Chapters",
       "thumbnail-button": "Thumbnail",
       "metadata-button": "Metadata",
+      "comments-button": "Comments",
       "keyboard-controls-button": "Keyboard Controls",
       "tooltip-aria": "Main Navigation"
     },
@@ -250,7 +251,8 @@
       "error-text": "An error has occurred. Please wait a bit and try again.",
       "goBack-button": "No, take me back",
       "callback-button-system": "Back to {{system}}",
-      "callback-button-generic": "Back to previous system"
+      "callback-button-generic": "Back to previous system",
+      "loading": "Loading..."
     },
 
     "trackSelection": {
@@ -334,6 +336,46 @@
 
     "chapters": {
       "editTitle": "Chapter Editor"
+    },
+
+    "comments": {
+      "no-comments": "No comments yet. Be the first to comment!",
+      "resolved": "Resolved",
+      "open": "Open",
+      "reply": "Reply",
+      "delete": "Delete",
+      "add-comment": "Add Comment",
+      "placeholder": "Write your comment...",
+      "select-reason": "Select a reason...",
+      "submit": "Submit",
+      "saving": "Saving...",
+      "reply-to": "Reply to",
+      "reply-placeholder": "Write your reply to",
+      "mark-resolved": "Mark as resolved",
+      "cancel": "Cancel",
+      "pending": "Pending",
+      "pending-tooltip": "Pending changes need to be saved in the Finish tab.",
+      "reasons": {
+        "cutting": "Cutting required",
+        "review": "Review required",
+        "async": "A/V tracks asynchronous",
+        "audio_issue": "Missing or defective audio track",
+        "cancelled": "Canceled event",
+        "conflicting_metadata": "Conflicting metadata",
+        "improper_point": "Improper in or out point",
+        "missing_agreement": "Missing agreement",
+        "other": "Other",
+        "privacy": "Privacy concern",
+        "segmentation": "Inaccurate segmentation",
+        "unknown_creator": "Creator unknown",
+        "video_issue": "Video distorted or cropped",
+        "wrong_input_format": "Input file format not supported",
+        "wrong_metadata": "Metadata needs correction",
+        "wrong_series_publication": "Wrong series or publication channel",
+        "wrong_workflow": "Wrong workflow",
+        "processing_failure": "Processing failure",
+        "admin_ui_notes": "Notes in Admin UI"
+      }
     },
 
     "keyboardControls": {

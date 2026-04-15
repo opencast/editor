@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { client } from "../util/client";
-import { Segment, PostEditArgument, httpRequestState } from "../types";
+import { Segment, Comment, PostEditArgument, httpRequestState } from "../types";
 import { settings } from "../config";
 import { createAppAsyncThunk } from "./createAsyncThunkWithTypes";
 import { selectCatalogById, selectCatalogIds, selectFieldById } from "./metadataSlice";
@@ -9,6 +9,30 @@ const initialState: httpRequestState = {
   status: "idle",
   error: undefined,
   errorReason: "unknown",
+};
+
+/**
+ * Convert comments for the backend API.
+ * New comments (with nanoid string IDs) get id 0 so the backend knows to create them.
+ * The `pending` field is stripped since the backend doesn't know about it.
+ */
+const convertComments = (comments: Comment[]) => {
+  return comments.map(comment => ({
+    id: typeof comment.id === "string" ? 0 : comment.id,
+    creationDate: comment.creationDate,
+    author: comment.author,
+    displayName: comment.displayName,
+    reason: comment.reason,
+    text: comment.text,
+    resolvedStatus: comment.resolvedStatus,
+    replies: comment.replies.map(reply => ({
+      id: typeof reply.id === "string" ? 0 : reply.id,
+      creationDate: reply.creationDate,
+      author: reply.author,
+      displayName: reply.displayName,
+      text: reply.text,
+    })),
+  }));
 };
 
 export const postVideoInformation =
@@ -48,6 +72,7 @@ export const postVideoInformation =
         chapters: argument.chapters,
         workflows: argument.workflow,
         metadataJSON: JSON.stringify(catalogsJson),
+        comments: convertComments(argument.comments),
       },
     );
     return response;

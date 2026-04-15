@@ -9,6 +9,7 @@ import subtitleReducer from "./subtitleSlice";
 import chapterReducer from "./chapterSlice";
 import thumbnailReducer from "./thumbnailSlice";
 import errorReducer from "./errorSlice";
+import commentReducer from "./commentSlice";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 
 export const store = configureStore({
@@ -23,6 +24,7 @@ export const store = configureStore({
     chapterState: chapterReducer,
     thumbnailState: thumbnailReducer,
     errorState: errorReducer,
+    commentState: commentReducer,
   },
 });
 

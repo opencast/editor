@@ -23,6 +23,7 @@ import { useTheme } from "../themes";
 import Thumbnail from "./Thumbnail";
 import Cutting from "./Cutting";
 import Chapter from "./Chapter";
+import Comments from "./Comments";
 
 /**
  * A container for the main functionality
@@ -142,6 +143,12 @@ const MainContent: React.FC = () => {
           ref={mainRef} tabIndex={-1} style={{ outline: "none" }}
         >
           <Thumbnail />
+        </div>
+      );
+    } else if (mainMenuState === MainMenuStateNames.comments) {
+      return (
+        <div css={[mainContentStyle, subtitleSelectStyle]} role="main">
+          <Comments />
         </div>
       );
     } else if (mainMenuState === MainMenuStateNames.finish) {

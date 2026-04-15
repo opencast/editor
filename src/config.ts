@@ -80,6 +80,9 @@ interface iSettings {
     mainFlavor: string,
     defaultVideoFlavor: Flavor | undefined,
   };
+    comments: {
+      show: boolean,
+    },
 }
 
 /**
@@ -125,6 +128,9 @@ const defaultSettings: iSettings = {
     show: false,
     mainFlavor: "chapters",
     defaultVideoFlavor: undefined,
+  },
+  comments: {
+    show: false,
   },
 };
 let configFileSettings: iSettings;
@@ -432,6 +438,9 @@ const SCHEMA = {
   thumbnail: {
     show: types.boolean,
     simpleMode: types.boolean,
+  },
+  comments: {
+    show: types.boolean,
   },
 };
 

@@ -103,6 +103,10 @@ type FetchVideoInformation = {
   chapters:video["subtitlesFromOpencast"],
   local: boolean,
   customizedTrackSelection: boolean, // TODO: Figure out if this still exists
+  comments?: { id: number; creationDate: string; author: string; displayName: string; reason: string; text: string;
+    resolvedStatus: boolean; replies: { id: number; creationDate: string; author: string; displayName: string; text:
+    string }[] }[],
+  commentReasons?: string[],
 }
 
 export const fetchVideoInformation = createAppAsyncThunk("video/fetchVideoInformation", async () => {
