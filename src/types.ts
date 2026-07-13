@@ -1,3 +1,4 @@
+import { InteractiveElementFromOpencast } from "./redux/interactiveElementsSlice";
 import { Catalog } from "./redux/metadataSlice";
 
 export interface Segment {
@@ -75,7 +76,9 @@ export interface PostEditArgument {
   subtitles: SubtitlesFromOpencast[]
   chapters: SubtitlesFromOpencast[]
   workflow?: [{id: string}]
-  metadata: Catalog[]
+  metadata: Catalog[],
+  textboxes: InteractiveElementFromOpencast
+  quizzes: InteractiveElementFromOpencast
 }
 
 // Use respective i18n keys as values
@@ -86,6 +89,7 @@ export enum MainMenuStateNames {
   subtitles = "mainMenu.subtitles-button",
   chapters = "mainMenu.chapters-button",
   thumbnail = "mainMenu.thumbnail-button",
+  interactiveElements = "mainMenu.interactiveElements-button",
   finish = "mainMenu.finish-button",
   keyboardControls = "mainMenu.keyboard-controls-button",
 }

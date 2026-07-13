@@ -3,7 +3,7 @@ import React from "react";
 import { css, SerializedStyles } from "@emotion/react";
 
 import { IconType } from "react-icons";
-import { LuScissors, LuFilm, LuFileText, LuSquareCheckBig, LuBookOpenText } from "react-icons/lu";
+import { LuScissors, LuFilm, LuFileText, LuSquareCheckBig, LuBookOpenText, LuSquareMousePointer } from "react-icons/lu";
 import { LuImage } from "react-icons/lu";
 import SubtitleIcon from "../img/subtitle.svg?react";
 
@@ -88,6 +88,12 @@ const MainMenu: React.FC = () => {
         stateName={MainMenuStateNames.thumbnail}
         bottomText={t(MainMenuStateNames.thumbnail)}
         ariaLabelText={t(MainMenuStateNames.thumbnail)}
+      />}
+      {settings.interactiveElements.show && <MainMenuButton
+        Icon={LuSquareMousePointer}
+        stateName={MainMenuStateNames.interactiveElements}
+        bottomText={t(MainMenuStateNames.interactiveElements)}
+        ariaLabelText={t(MainMenuStateNames.interactiveElements)}
       />}
       <MainMenuButton
         Icon={LuSquareCheckBig}

@@ -6,6 +6,7 @@
       "subtitles-button": "Subtitles",
       "chapters-button": "Chapters",
       "thumbnail-button": "Thumbnail",
+      "interactiveElements-button": "Interactive Elements",
       "metadata-button": "Metadata",
       "keyboard-controls-button": "Keyboard Controls",
       "tooltip-aria": "Main Navigation"
@@ -334,6 +335,44 @@
 
     "chapters": {
       "editTitle": "Chapter Editor"
+    },
+
+    "interactiveElements" : {
+      "title": "Interactive Elements Editor",
+      "addTextbox": "Add Textbox",
+      "addTextbox-tooltip": "Add a textbox at the current timeline marker position.",
+      "addTextbox-tooltip-aria": "Add. Add a textbox at the current timeline marker position.",
+      "addQuiz": "Add Quiz",
+      "addQuiz-tooltip": "Add a quiz at the current timeline marker position.",
+      "addQuiz-tooltip-aria": "Add. Add a quiz at the current timeline marker position.",
+      "editElement-tooltip": "Edit the current element",
+      "editElement-tooltip-aria": "Edit the current element",
+      "deleteElement-tooltip": "Delete the current element",
+      "deleteElement-tooltip-aria": "Delete the current element",
+      "deleteElement-warning-header": "Caution!",
+      "deleteElement-warning": "This will remove the element! Are you sure?"
+    },
+
+    "interactiveElementsEditor": {
+      "title": {
+        "textbox": "Textbox Editor",
+        "quiz": "Quiz Editor"
+      },
+      "start": "Start",
+      "submit": "Submit",
+      "textbox": {
+        "description": "A little box for displaying a small amount of text and optionally a link. The box remains on screen for ten seconds.",
+        "text": "Text",
+        "link": "Link"
+      },
+      "quiz": {
+        "description": "Stops the video at the start time to display a multiple-choice quiz.",
+        "question": "Question",
+        "answers": "Answers",
+        "answer": "Answer",
+        "answerCorrect": "Correct",
+        "answerDelete": "Remove"
+      }
     },
 
     "keyboardControls": {

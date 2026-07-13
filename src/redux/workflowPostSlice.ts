@@ -48,6 +48,8 @@ export const postVideoInformation =
         chapters: argument.chapters,
         workflows: argument.workflow,
         metadataJSON: JSON.stringify(catalogsJson),
+        textboxes: argument.textboxes,
+        quizzes: argument.quizzes,
       },
     );
     return response;

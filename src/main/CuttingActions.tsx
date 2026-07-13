@@ -310,7 +310,7 @@ interface cuttingActionsButtonInterface {
  * A button representing a single action a user can take while cutting
  * @param param0
  */
-const CuttingActionsButton: React.FC<cuttingActionsButtonInterface> = ({
+export const CuttingActionsButton: React.FC<cuttingActionsButtonInterface> = ({
   Icon,
   actionName,
   actionHandler,
@@ -393,7 +393,7 @@ interface ZoomSliderInterface {
   ariaLabelText: string,
 }
 
-const ZoomSlider : React.FC<ZoomSliderInterface> = ({
+export const ZoomSlider : React.FC<ZoomSliderInterface> = ({
   actionHandler,
   tooltip,
   ariaLabelText,

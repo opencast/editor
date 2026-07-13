@@ -44,6 +44,7 @@ import {
 } from "../redux/chapterSlice";
 import TimelineStamps from "./TimelineStamps";
 import { selectKeymap } from "../redux/hotkeySlice";
+import InteractiveElementsTimeline from "./InteractiveElementsTimeline";
 
 /**
  * A container for visualizing the cutting of the video, as well as for controlling
@@ -60,6 +61,7 @@ const Timeline: React.FC<{
   setCurrentlyAt: ActionCreatorWithPayload<number, string>,
   setIsPlaying: ActionCreatorWithPayload<boolean, string>,
   isChapters?: boolean,
+  isInteractiveElements?: boolean,
 }> = ({
   timelineHeight = 200,
   styleByActiveSegment = true,
@@ -69,6 +71,7 @@ const Timeline: React.FC<{
   setCurrentlyAt,
   setIsPlaying,
   isChapters = false,
+  isInteractiveElements = false,
 }) => {
 
   // Init redux variables
@@ -166,7 +169,7 @@ const Timeline: React.FC<{
   };
 
   return (
-    <CuttingActionsContextMenu>
+    <CuttingActionsContextMenu isChapters={isChapters} isInteractiveElements={isInteractiveElements}>
       <div css={css({ position: "absolute" })}>
         <TimelineStamps
           durationMs={duration}
@@ -218,6 +221,12 @@ const Timeline: React.FC<{
                 selectSegments={chapterSelectSegments}
                 selectActiveSegmentIndex={chapterSelectActiveSegmentIndex}
                 moveCut={chapterMoveCut}
+              />
+            }
+            {isInteractiveElements &&
+              <InteractiveElementsTimeline
+                timelineWidth={width}
+                timelineHeight={timelineHeight}
               />
             }
             <SegmentsList

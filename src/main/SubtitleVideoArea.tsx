@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { css } from "@emotion/react";
-import { RootState, ThunkApiConfig, useAppSelector } from "../redux/store";
+import { RootState, useAppSelector } from "../redux/store";
 import {
   selectIsMuted,
   selectVideos,
@@ -15,11 +15,11 @@ import { settings } from "../config";
 import { useTranslation } from "react-i18next";
 import { serializeSubtitle } from "../util/utilityFunctions";
 import { useTheme } from "../themes";
-import { VideoPlayer } from "./VideoPlayers";
+import { VideoPlayer, VideoPlayerProps } from "./VideoPlayers";
 import VideoControls from "./VideoControls";
 import Select from "react-select";
 import { selectFieldStyle } from "../cssStyles";
-import { ActionCreatorWithPayload, AsyncThunk } from "@reduxjs/toolkit";
+import { ActionCreatorWithPayload } from "@reduxjs/toolkit";
 import { setCurrentlyAt } from "../redux/subtitleSlice";
 
 /**
@@ -39,13 +39,13 @@ const SubtitleVideoArea: React.FC<{
   selectPreviewTriggered: (state: RootState) => boolean,
   selectAspectRatio: (state: RootState) => number,
   selectIsPlayPreview: (state: RootState) => boolean,
-  selectSelectedSubtitleById: (state: RootState) => SubtitlesInEditor,
+  selectSelectedSubtitleById: (state: RootState) => SubtitlesInEditor | undefined,
   setIsPlaying: ActionCreatorWithPayload<boolean, string>,
-  setPreviewTriggered: ActionCreatorWithPayload<boolean, string>,
-  setAspectRatio: ActionCreatorWithPayload<{ dataKey: number; } & { width: number, height: number; }, string>,
+  setPreviewTriggered: VideoPlayerProps["setPreviewTriggered"],
+  setAspectRatio: VideoPlayerProps["setAspectRatio"],
   setIsPlayPreview: ActionCreatorWithPayload<boolean, string>,
-  setClickTriggered: ActionCreatorWithPayload<boolean, string>,
-  setCurrentlyAtAndTriggerPreview: AsyncThunk<void, number, ThunkApiConfig>,
+  setClickTriggered: VideoPlayerProps["setClickTriggered"],
+  setCurrentlyAtAndTriggerPreview: VideoPlayerProps["setCurrentlyAt"],
 }> = ({
   selectIsPlaying,
   selectCurrentlyAt,

@@ -12,8 +12,10 @@ import { useAppDispatch, useAppSelector } from "../redux/store";
 import {
   selectCustomizedTrackSelection,
   selectHasChanges,
+  selectQuizzesFromOpencast,
   selectSegments,
   selectSelectedWorkflowId,
+  selectTextBoxesFromOpencast,
   selectTracks,
   setHasChanges as videoSetHasChanges,
 } from "../redux/videoSlice";
@@ -40,6 +42,12 @@ import { ProtoButton } from "@opencast/appkit";
 import { setEnd } from "../redux/endSlice";
 import { selectSubtitles as selectChapters } from "../redux/chapterSlice";
 import { SubtitlesInEditor } from "../types";
+import {
+  InteractiveElement,
+  InteractiveElementFromOpencast,
+  selectInteractiveElements,
+} from "../redux/interactiveElementsSlice";
+import { nanoid } from "@reduxjs/toolkit";
 
 /**
  * Shown if the user wishes to save.
@@ -131,6 +139,9 @@ export const SaveButton: React.FC<{
   const subtitles = useAppSelector(selectSubtitles);
   const chapters = useAppSelector(selectChapters);
   const metadata = useAppSelector(selectAllCatalogs);
+  const interactiveElements = useAppSelector(selectInteractiveElements);
+  const textboxesFromOpencast = useAppSelector(selectTextBoxesFromOpencast);
+  const quizzesFromOpencast = useAppSelector(selectQuizzesFromOpencast);
   const selectedWorkflowId = useAppSelector(selectSelectedWorkflowId);
   const workflowStatus = useAppSelector(selectStatus);
   const theme = useTheme();
@@ -165,6 +176,20 @@ export const SaveButton: React.FC<{
       deleted,
     }));
 
+  const prepareInteractiveElement = (
+    elements: InteractiveElement[],
+    type: InteractiveElement["type"],
+    id?: string,
+  ): InteractiveElementFromOpencast => {
+    const preparedElements = elements
+      .filter(element => element.type === type)
+      .map(({ type, idInternal, ...rest }) => rest);
+    return ({
+      id: id ?? nanoid(),
+      elementsJSON: JSON.stringify(preparedElements),
+    });
+  };
+
   const save = () => {
     dispatch(postVideoInformation({
       segments: segments,
@@ -173,6 +198,8 @@ export const SaveButton: React.FC<{
       subtitles: prepareSubtitles(subtitles),
       chapters: prepareSubtitles(chapters),
       metadata: metadata,
+      textboxes: prepareInteractiveElement(interactiveElements, "Textbox", textboxesFromOpencast?.id),
+      quizzes: prepareInteractiveElement(interactiveElements, "Quiz", quizzesFromOpencast?.id),
       workflow: startWorkflow && selectedWorkflowId ? [{ id: selectedWorkflowId }] : undefined,
     }));
   };

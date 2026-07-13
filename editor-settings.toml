@@ -184,6 +184,17 @@ spanish = { lang = "es" }
 # Default: false
 #simpleMode = false
 
+####
+# Interactive Elements
+##
+
+[interactiveElements]
+
+# If the interactive elements editor appears in the main menu
+# Type: boolean
+# Default: false
+#show = false
+
 
 
 ############################################################

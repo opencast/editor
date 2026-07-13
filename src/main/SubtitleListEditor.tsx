@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { shallowEqual } from "react-redux";
 import { RootState, useAppDispatch, useAppSelector } from "../redux/store";
-import { basicButtonStyle } from "../cssStyles";
+import { basicButtonStyle, timeInputStyle } from "../cssStyles";
 import { subtitleListHotkeysDefaultOptions } from "../globalKeys";
 import { SubtitleCue, SubtitlesInEditor } from "../types";
 import { convertMsToReadableString } from "../util/utilityFunctions";
@@ -187,7 +187,6 @@ const SubtitleListEditor: React.FC<{
       setFocusToSegmentBelowId,
     ],
   );
-
 
   return (
     <div css={listStyle}>
@@ -524,30 +523,13 @@ const SubtitleListSegment : React.FC<{
     visibility: "hidden",
   });
 
-  const fieldStyle = css({
-    fontSize: "1em",
-    marginLeft: "15px",
-    marginRight: "2px",
-    borderRadius: "5px",
-    borderWidth: "1px",
-    padding: "10px 10px",
-    background: `${theme.element_bg}`,
-    border: "1px solid #ccc",
-    color: `${theme.text}`,
+  const subtitleTimeInputStyle = css({
+    height: isChapterInputs ? "20px" : "16px",
+    width: "96px",
   });
 
   const timeWrapperStyle = css({
     display: "flex",
-  });
-
-  const timeInputStyle = css({
-    fontSize: "1em",
-    padding: "10px",
-    borderRight: "none",
-    borderRadius: "5px 0 0 5px",
-    background: `${theme.element_bg}`,
-    border: "1px solid #ccc",
-    color: `${theme.text}`,
   });
 
   const copyTimeButtonStyle = css({
@@ -581,7 +563,7 @@ const SubtitleListSegment : React.FC<{
 
       <textarea
         ref={textAreaRef}
-        css={[fieldStyle, textFieldStyle]}
+        css={[timeInputStyle(theme), textFieldStyle]}
         defaultValue={cue.text}
         onKeyDown={(event: React.KeyboardEvent) => {
           if (event.key === "Enter" && !event.shiftKey && isFunctionButtonEnabled) {
@@ -597,7 +579,7 @@ const SubtitleListSegment : React.FC<{
         <div css={timeAreaStyle}>
           <div css={timeWrapperStyle}>
             <TimeInput
-              generalFieldStyle={[timeInputStyle,
+              generalFieldStyle={[timeInputStyle(theme), subtitleTimeInputStyle,
                 css({ ...(cue.startTime > cue.endTime && { borderColor: "red", borderWidth: "2px" }) })]}
               value={cue.startTime}
               changeCallback={updateCueStart}
@@ -615,7 +597,7 @@ const SubtitleListSegment : React.FC<{
           </div>
           <div css={timeWrapperStyle}>
             <TimeInput
-              generalFieldStyle={[timeInputStyle,
+              generalFieldStyle={[timeInputStyle(theme), subtitleTimeInputStyle,
                 css({ ...(cue.startTime > cue.endTime && { borderColor: "red", borderWidth: "2px" }) })]}
               value={cue.endTime}
               changeCallback={updateCueEnd}
@@ -635,8 +617,7 @@ const SubtitleListSegment : React.FC<{
         :
         <TimeInput
           disabled={props.index === 0 ? true : false}
-          isChapterInputs={isChapterInputs}
-          generalFieldStyle={[fieldStyle,
+          generalFieldStyle={[timeInputStyle(theme), subtitleTimeInputStyle,
             css({ ...(prevCue && (prevCue.startTime > cue.startTime) && { borderColor: "red", borderWidth: "2px" }) })]}
           value={cue.startTime}
           changeCallback={updateCueStartChapter}
@@ -732,14 +713,13 @@ const FunctionButton: React.FC<{
 /**
  * Input field for the time values for a subtitle segment
  */
-const TimeInput: React.FC<{
+export const TimeInput: React.FC<{
   value: number,
   changeCallback: (value: number) => void,
   generalFieldStyle: SerializedStyles[],
   tooltip: string,
   tooltipAria: string,
   disabled?: boolean,
-  isChapterInputs?: boolean,
 }> = ({
   value,
   changeCallback,
@@ -747,7 +727,6 @@ const TimeInput: React.FC<{
   tooltip,
   tooltipAria,
   disabled,
-  isChapterInputs,
 }) => {
 
   // Stores the millisecond value as a string for the input element
@@ -785,8 +764,6 @@ const TimeInput: React.FC<{
   };
 
   const timeFieldStyle = css({
-    height: isChapterInputs ? "20px" : "16px",
-    width: "96px",
     ...(parsingError && { borderColor: "red", borderWidth: "2px" }),
   });
 

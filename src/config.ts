@@ -80,6 +80,12 @@ interface iSettings {
     mainFlavor: string,
     defaultVideoFlavor: Flavor | undefined,
   };
+  interactiveElements: {
+    show: boolean,
+    textboxesMainFlavor: string,
+    quizzesMainFlavor: string,
+    defaultVideoFlavor: Flavor | undefined,
+  };
 }
 
 /**
@@ -124,6 +130,12 @@ const defaultSettings: iSettings = {
   chapters: {
     show: false,
     mainFlavor: "chapters",
+    defaultVideoFlavor: undefined,
+  },
+  interactiveElements: {
+    show: false,
+    textboxesMainFlavor: "textboxes",
+    quizzesMainFlavor: "quizzes",
     defaultVideoFlavor: undefined,
   },
 };
@@ -427,6 +439,12 @@ const SCHEMA = {
   chapters: {
     show: types.boolean,
     mainFlavor: types.string,
+    defaultVideoFlavor: types.map,
+  },
+  interactiveElements: {
+    show: types.boolean,
+    textboxesMainFlavor: types.string,
+    quizzesMainFlavor: types.string,
     defaultVideoFlavor: types.map,
   },
   thumbnail: {

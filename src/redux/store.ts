@@ -9,6 +9,7 @@ import subtitleReducer from "./subtitleSlice";
 import chapterReducer from "./chapterSlice";
 import thumbnailReducer from "./thumbnailSlice";
 import hotkeyReducer from "./hotkeySlice";
+import interactiveElementsReducer from "./interactiveElementsSlice";
 import errorReducer from "./errorSlice";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 import storage from "redux-persist/lib/storage";
@@ -26,6 +27,7 @@ const reducers = combineReducers({
   thumbnailState: thumbnailReducer,
   hotkeyState: hotkeyReducer,
   errorState: errorReducer,
+  interactiveElementsState: interactiveElementsReducer,
 });
 
 const persistConfig = {

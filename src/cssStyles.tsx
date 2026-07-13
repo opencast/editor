@@ -432,3 +432,15 @@ export const undisplayContainer = (maxWidth: number) => css({
     display: "none",
   },
 });
+
+export const timeInputStyle = (theme: Theme) => css({
+  fontSize: "1em",
+  marginLeft: "15px",
+  marginRight: "2px",
+  borderRadius: "5px",
+  borderWidth: "1px",
+  padding: "10px 10px",
+  background: `${theme.element_bg}`,
+  border: "1px solid #ccc",
+  color: `${theme.text}`,
+});

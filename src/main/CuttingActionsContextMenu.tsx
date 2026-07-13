@@ -12,8 +12,12 @@ import { selectKeymap } from "../redux/hotkeySlice";
 
 const CuttingActionsContextMenu: React.FC<{
   children: React.ReactNode,
+  isChapters?: boolean
+  isInteractiveElements?: boolean,
 }> = ({
   children,
+  isChapters = false,
+  isInteractiveElements = false,
 }) => {
 
   const { t } = useTranslation();
@@ -62,12 +66,34 @@ const CuttingActionsContextMenu: React.FC<{
     },
   ];
 
+  const render = () => {
+    if (isChapters) {
+      return (
+        <>
+          {children}
+        </>
+      );
+    }
+    if (isInteractiveElements) {
+      return (
+        <>
+          {children}
+        </>
+      );
+    }
+    return (
+      <ThemedContextMenu
+        menuItems={cuttingContextMenuItems}
+      >
+        {children}
+      </ThemedContextMenu>
+    );
+  };
+
   return (
-    <ThemedContextMenu
-      menuItems={cuttingContextMenuItems}
-    >
-      {children}
-    </ThemedContextMenu>
+    <>
+      {render()}
+    </>
   );
 };
 

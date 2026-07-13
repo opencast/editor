@@ -118,7 +118,7 @@ export interface VideoPlayerForwardRef {
   getWidth: () => number,
 }
 
-interface VideoPlayerProps {
+export interface VideoPlayerProps {
   dataKey: number,
   url: string | undefined,
   isPrimary: boolean,
