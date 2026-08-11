@@ -57,6 +57,8 @@ jobs:
           # This set the editor's datasource to the relevant test server
           sed -i "s#develop.opencast.org#$SERVER#g" public/editor-settings.toml
           npm run build
+          # Revert the local edit so later steps can switch branches cleanly
+          git checkout -- public/editor-settings.toml
         env:
           SERVER: ${{needs.detect-repo-owner.outputs.server}}
           PUBLIC_URL: ${{needs.detect-repo-owner.outputs.branch}}
