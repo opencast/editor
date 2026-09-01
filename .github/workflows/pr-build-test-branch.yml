@@ -18,7 +18,7 @@ jobs:
       branch: ${{ steps.branch-name.outputs.branch }}
     steps:
       - name: Checkout sources
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
 
       - name: Determine the correct test server
         id: test-server
@@ -41,7 +41,7 @@ jobs:
         id: build-path
 
       - name: Checkout sources
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
 
       - name: Get Node.js
         uses: actions/setup-node@v5
@@ -89,7 +89,7 @@ jobs:
 
     steps:
       - name: Checkout Sources
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
 
       - name: Get changed locale files
         uses: dorny/paths-filter@v3
