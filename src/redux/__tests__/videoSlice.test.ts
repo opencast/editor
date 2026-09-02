@@ -1,8 +1,8 @@
 import reducer, { initialState, setIsPlaying, selectIsPlaying, setCurrentlyAt,
   selectCurrentlyAt, selectActiveSegmentIndex, selectPreviewTriggered,
   selectDuration, video, cut, selectSegments, markAsDeletedOrAlive, mergeRight,
-  fetchVideoInformation, selectVideoURL, selectTitle,
-  selectTracks, selectWorkflows } from "../videoSlice";
+  fetchVideoInformation, selectTitle,
+  selectTracks, selectWorkflows, selectTrackURLs } from "../videoSlice";
 import cloneDeep from "lodash/cloneDeep";
 import { httpRequestState } from "../../types";
 
@@ -300,12 +300,12 @@ describe("Video reducer", () => {
     // Arrange
     const resultStatus: httpRequestState = { status: "success", error: undefined, errorReason: "unknown" };
     const segments = [{ start: 0, end: 42, deleted: false }];
-    const videoURLs: video["videoURLs"] = ["video/url"];
+    const trackURLs: video["trackURLs"] = ["video/url"];
     const dur: video["duration"] = 42;
     const title: video["title"] = "Video Title";
     // const presenters: video["presenters"] = [ "Otto Opencast" ]    // Currently missing from the API
     const tracks: video["tracks"] = [{
-      id: "id", uri: videoURLs[0], flavor: { subtype: "prepared", type: "presenter" },
+      id: "id", uri: trackURLs[0], flavor: { subtype: "prepared", type: "presenter" },
       /* eslint-disable camelcase */
       video_stream: { available: true, enabled: true, thumbnail_uri: "thumb/url" },
       audio_stream: { available: true, enabled: true, thumbnail_uri: "thumb/url" },
@@ -333,7 +333,7 @@ describe("Video reducer", () => {
     expect(rootState.videoState).toMatchObject(resultStatus);
 
     expect(selectSegments(rootState)).toMatchObject(segments);
-    expect(selectVideoURL(rootState)).toMatchObject(videoURLs);
+    expect(selectTrackURLs(rootState)).toMatchObject(trackURLs);
     expect(selectDuration(rootState)).toEqual(dur);
     expect(selectTitle(rootState)).toEqual(title);
     expect(selectTracks(rootState)).toMatchObject(tracks);

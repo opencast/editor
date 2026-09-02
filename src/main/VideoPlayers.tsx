@@ -9,7 +9,7 @@ import {
   setIsPlaying,
   selectIsMuted,
   selectVolume,
-  selectVideoCount,
+  selectTrackCount,
   selectDurationInSeconds,
   setPreviewTriggered,
   selectPreviewTriggered,
@@ -20,7 +20,7 @@ import {
   setJumpTriggered,
   selectJumpTriggered,
   setCurrentlyAt,
-  selectVideos,
+  selectTracks,
 } from "../redux/videoSlice";
 
 import ReactPlayer from "react-player";
@@ -38,6 +38,7 @@ import { useTheme } from "../themes";
 
 import { backgroundBoxStyle } from "../cssStyles";
 import { ErrorBox } from "@opencast/appkit";
+import VideoOffImage from "../img/video-off.png?url";
 
 const VideoPlayers: React.FC<{
   refs?: React.MutableRefObject<(VideoPlayerForwardRef | null)[]>,
@@ -49,10 +50,10 @@ const VideoPlayers: React.FC<{
   maxHeightInPixel = 300,
 }) => {
 
-  const videos = useAppSelector(selectVideos);
+  const videos = useAppSelector(selectTracks);
   let primaryIndex = videos.findIndex(e => e.audio_stream.available === true);
   primaryIndex = primaryIndex < 0 ? 0 : primaryIndex;
-  const videoCount = useAppSelector(selectVideoCount);
+  const videoCount = useAppSelector(selectTrackCount);
 
   const [videoPlayers, setVideoPlayers] = useState<JSX.Element[]>([]);
 
@@ -80,6 +81,7 @@ const VideoPlayers: React.FC<{
           subtitleUrl={""}
           first={i === 0}
           last={i === videoCount - 1}
+          audioOnly={!videos[i].video_stream.available}
           selectIsPlaying={selectIsPlaying}
           selectIsMuted={selectIsMuted}
           selectVolume={selectVolume}
@@ -125,6 +127,7 @@ interface VideoPlayerProps {
   first: boolean,
   last: boolean,
   overwritePlayerCSS?: SerializedStyles,
+  audioOnly?: boolean,
   selectIsPlaying: (state: RootState) => boolean,
   selectIsMuted: (state: RootState) => boolean,
   selectVolume: (state: RootState) => number,
@@ -168,6 +171,7 @@ export const VideoPlayer = React.forwardRef<VideoPlayerForwardRef, VideoPlayerPr
       first,
       last,
       overwritePlayerCSS,
+      audioOnly = false,
       selectCurrentlyAtInSeconds,
       selectPreviewTriggered,
       selectClickTriggered,
@@ -315,6 +319,7 @@ export const VideoPlayer = React.forwardRef<VideoPlayerForwardRef, VideoPlayerPr
           // Skip player when navigating page with keyboard
           tabIndex: "-1",
           crossOrigin: "anonymous",    // allow thumbnail generation
+          poster: audioOnly && VideoOffImage, // Show image when there is no video stream
         },
         tracks: [
           { kind: "subtitles", src: subtitleUrl, srcLang: "en", default: true, label: "I am irrelevant" },
@@ -396,6 +401,7 @@ export const VideoPlayer = React.forwardRef<VideoPlayerForwardRef, VideoPlayerPr
 
     const reactPlayerStyle = css({
       aspectRatio: "16 / 9",    // Hard-coded for now because there are problems with updating this value at runtime
+      padding: audioOnly ? "0px" : "20px",
 
       overflow: "hidden", // Required for borderRadius to show
       ...first && {
@@ -406,6 +412,7 @@ export const VideoPlayer = React.forwardRef<VideoPlayerForwardRef, VideoPlayerPr
         borderTopLeftRadius: "5px",
         borderBottomRightRadius: "5px",
       },
+      backgroundColor: theme.audio_only_bg,
     });
 
     const videoPlayerWrapperStyles = css({

@@ -68,6 +68,7 @@ export interface Theme {
   clock_focus: string;
   digit_selected: string;
   text_shadow: string;
+  audio_only_bg: string;
 }
 
 export const lightMode: Theme = {
@@ -130,6 +131,7 @@ export const lightMode: Theme = {
     `0 2px ${COLORS.neutral15}, 0 -2px ${COLORS.neutral15},` +
     `1px 1px ${COLORS.neutral15}, -1px -1px ${COLORS.neutral15},` +
     `1px -1px ${COLORS.neutral15}, -1px 1px ${COLORS.neutral15}`,
+  audio_only_bg: COLORS.neutral05,
 };
 
 export const darkMode: Theme = {
@@ -190,6 +192,7 @@ export const darkMode: Theme = {
     `0 2px ${COLORS.neutral15}, 0 -2px ${COLORS.neutral15},` +
     `1px 1px ${COLORS.neutral15}, -1px -1px ${COLORS.neutral15},` +
     `1px -1px ${COLORS.neutral15}, -1px 1px ${COLORS.neutral15}`,
+  audio_only_bg: COLORS.neutral90,
 };
 
 export const highContrastDarkMode: Theme = {
@@ -248,6 +251,7 @@ export const highContrastDarkMode: Theme = {
   digit_selected: "#000",
   text_shadow: "2px 0 #000, -2px 0 #000, 0 2px #000, 0 -2px #000," +
     " 1px 1px #000, -1px -1px #000, 1px -1px #000, -1px 1px #000",
+  audio_only_bg: "#fff",
 };
 
 export const highContrastLightMode: Theme = {
@@ -306,4 +310,5 @@ export const highContrastLightMode: Theme = {
   digit_selected: "#fff",
   text_shadow: "2px 0 snow, -2px 0 snow, 0 2px snow, 0 -2px snow," +
     " 1px 1px snow, -1px -1px snow, 1px -1px snow, -1px 1px snow",
+  audio_only_bg: "#fff",
 };

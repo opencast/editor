@@ -9,7 +9,7 @@ import { useAppDispatch, useAppSelector } from "../redux/store";
 import { Segment, httpRequestState } from "../types";
 import {
   selectDuration,
-  selectVideoURL,
+  selectTrackURLs,
   selectWaveformImages,
   setWaveformImages,
   selectTimelineZoom,
@@ -691,7 +691,7 @@ export const Waveforms: React.FC<{ timelineHeight: number; topOffset?: number }>
   const { t } = useTranslation();
 
   const dispatch = useAppDispatch();
-  const videoURLs = useAppSelector(selectVideoURL);
+  const videoURLs = useAppSelector(selectTrackURLs);
   const videoURLStatus = useAppSelector((state: { videoState: { status: httpRequestState["status"]; }; }) =>
     state.videoState.status);
   const theme = useTheme();

@@ -6,7 +6,9 @@ import ReactPlayer from "react-player";
 
 import { Track } from "../types";
 import {
+  selectAudiosOnly,
   selectCustomizedTrackSelection,
+  selectTracks,
   selectVideos,
   selectWaveformImages,
   setAudioEnabled,
@@ -37,27 +39,35 @@ const TrackSelection: React.FC = () => {
   const dispatch = useAppDispatch();
 
   // Generate list of tracks
-  const tracks = useAppSelector(selectVideos);
+  const tracks = useAppSelector(selectTracks);
+  const videos = useAppSelector(selectVideos);
+  const audioOnlys = useAppSelector(selectAudiosOnly);
+
   let enabledCount = 0;
   if (settings.trackSelection.atLeastOneVideo) {
     // Only care about at least one video stream being enabled
-    enabledCount = tracks.reduce(
+    enabledCount = videos.reduce(
       (memo: number, track: Track) =>
         memo + (track.video_stream.enabled ? 1 : 0),
       0,
     );
   } else {
     // Make sure that at least one track remains enabled
-    enabledCount = tracks.reduce(
+    enabledCount += videos.reduce(
       (memo: number, track: Track) =>
         memo + (track.video_stream.enabled ? 1 : 0) + (track.audio_stream.enabled ? 1 : 0),
+      0,
+    );
+    enabledCount += audioOnlys.reduce(
+      (memo: number, track: Track) =>
+        memo + (track.audio_stream.enabled ? 1 : 0),
       0,
     );
   }
   const images = useAppSelector(selectWaveformImages);
   const customizedTrackSelection = !!useAppSelector(selectCustomizedTrackSelection);
 
-  const videoTrackItems = tracks.map(
+  const videoTrackItems = videos.map(
     (track: Track) => (
       <VideoTrackItem
         key={track.id}
@@ -67,7 +77,7 @@ const TrackSelection: React.FC = () => {
       />),
   );
 
-  const audioTrackItems = tracks.map(
+  const audioTrackItems = [...videos, ...audioOnlys].map(
     (track: Track, index: number) => (
       <AudioTrackItem
         key={track.id}
