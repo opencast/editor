@@ -41,7 +41,7 @@ jobs:
           git clone -b gh-pages "git@github.com:${{ github.repository_owner }}/editor-test.git" editor-test
 
       - name: Fetch build from GHA
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: ${{ github.event.workflow_run.id }}-build
           path: ${{ runner.temp }}/
@@ -53,7 +53,7 @@ jobs:
           tar xf ${{ runner.temp }}/build.tar
 
       - name: Fetch pr number from GHA
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: ${{ github.event.workflow_run.id }}-number
           github-token: ${{ github.token }}
