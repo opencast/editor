@@ -22,6 +22,7 @@ import {
   setJumpTriggered,
   setAspectRatio,
   selectPrimaryThumbnailTrack,
+  setThumbnailTime,
 } from "../redux/videoSlice";
 import { Track } from "../types";
 import Timeline from "./Timeline";
@@ -210,8 +211,11 @@ const ThumbnailActions: React.FC<{
   //   *track: Generate to
   //   *index: Generate from
   const generate = (track: Track, index: number) => {
+    const time = generateRefs.current[index]?.getCurrentTime();
+    const timeObject = time ? { time: time.toString(), flavorType: track.flavor.type } : undefined;
     const uri = generateRefs.current[index]?.captureVideo();
     dispatch(setThumbnail({ id: track.id, uri: uri }));
+    dispatch(setThumbnailTime({ id: track.id, time: timeObject }));
     dispatch(setHasChanges(true));
   };
 

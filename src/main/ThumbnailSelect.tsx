@@ -1,7 +1,7 @@
 import { css, SerializedStyles } from "@emotion/react";
 import { IconType } from "react-icons";
 import { LuCamera, LuCopy, LuCircleX, LuUpload } from "react-icons/lu";
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useAppDispatch, useAppSelector } from "../redux/store";
 import {
@@ -16,11 +16,13 @@ import {
   setHasChanges,
   setThumbnail,
   setThumbnails,
+  setThumbnailTime,
 } from "../redux/videoSlice";
 import { Track } from "../types";
 import { ThemedTooltip } from "./Tooltip";
 import { ProtoButton } from "@opencast/appkit";
 import { setIndex, setIsDisplayEditView } from "../redux/thumbnailSlice";
+import ReactPlayer from "react-player";
 
 /**
  * Choose between various thumbnail actions for the available tracks.
@@ -98,6 +100,7 @@ const ThumbnailSelector: React.FC<{
         track={track}
         trackIndex={trackIndex}
       />
+      <WorkaroundThumbnailGenerator track={track} />
     </div>
   );
 };
@@ -265,6 +268,7 @@ export const UploadButton: React.FC<{
       if (e.target && e.target.result) {
         const uri = e.target.result as string; // We know this must be string because we use "readAsDataURL"
         dispatch(setThumbnail({ id: track.id, uri: uri }));
+        dispatch(setThumbnailTime({ id: track.id, time: undefined }));
         dispatch(setHasChanges(true));
       }
     };
@@ -311,8 +315,13 @@ export const DiscardButton: React.FC<{
 
   const originalThumbnails = useAppSelector(selectOriginalThumbnails);
 
+  const originalThumbnail = originalThumbnails.find(e => e.id === track.id);
+  const active = (track.thumbnailUri && track.thumbnailUri.startsWith("data") && !track.thumbnailTime)
+    || (track.thumbnailTime && originalThumbnail && track.thumbnailTime != originalThumbnail.time);
+
   const discardThumbnail = (id: string) => {
-    dispatch(setThumbnail({ id: id, uri: originalThumbnails.find(e => e.id === id)?.uri }));
+    dispatch(setThumbnail({ id: id, uri: originalThumbnail?.uri }));
+    dispatch(setThumbnailTime({ id: id, time: originalThumbnail?.time }));
   };
 
   return (
@@ -322,7 +331,7 @@ export const DiscardButton: React.FC<{
       tooltipText={t("thumbnail.buttonDiscard-tooltip")}
       ariaLabel={t("thumbnail.buttonDiscard-tooltip-aria")}
       Icon={LuCircleX}
-      active={(track.thumbnailUri && track.thumbnailUri.startsWith("data") ? true : false)}
+      active={(active ? true : false)}
       index={index}
       overwriteCSS={overwriteCSS}
     />
@@ -342,13 +351,13 @@ export const UseForAllTracksButton: React.FC<{
   const tracks = useAppSelector(selectTracks);
 
   // Set the given thumbnail for all tracks
-  const setForOtherThumbnails = (uri: string | undefined) => {
-    if (uri === undefined) {
-      return;
-    }
+  const setForOtherThumbnails = ({ uri, time }: {
+    uri: string | undefined,
+    time?: { time: string; flavorType: string }
+  }) => {
     const thumbnails = [];
     for (const track of tracks) {
-      thumbnails.push({ id: track.id, uri: uri });
+      thumbnails.push({ id: track.id, uri, time });
     }
     dispatch(setThumbnails(thumbnails));
     dispatch(setHasChanges(true));
@@ -356,7 +365,7 @@ export const UseForAllTracksButton: React.FC<{
 
   return (
     <ThumbnailButton
-      handler={() => { setForOtherThumbnails(track.thumbnailUri); }}
+      handler={() => { setForOtherThumbnails({ uri: track.thumbnailUri, time: track.thumbnailTime }); }}
       text={t("thumbnail.buttonUseForOtherThumbnails")}
       tooltipText={t("thumbnail.buttonUseForOtherThumbnails-tooltip")}
       ariaLabel={t("thumbnail.buttonUseForOtherThumbnails-tooltip-aria")}
@@ -451,6 +460,74 @@ export const ThumbnailButton: React.FC<{
         {text}
       </ProtoButton>
     </ThemedTooltip>
+  );
+};
+
+/**
+ * Generates a temporary thumbnail from a timestamp
+ *
+ * Workaround for the backend being unable to send us thumbnails from
+ * publications. This way, we can at least show a thumbnail to a user
+ * if they previously generated one via timestamp.
+ */
+const WorkaroundThumbnailGenerator: React.FC<{
+  track: Track,
+}> = ({ track }) => {
+  const dispatch = useAppDispatch();
+
+  const tracks = useAppSelector(selectTracks);
+  const thumbnailTime = track.thumbnailTime;
+  const thumbnailTrack = thumbnailTime
+    ? tracks.find(t => t.flavor.type === thumbnailTime.flavorType)
+    : undefined;
+
+  const ref = useRef<ReactPlayer>(null);
+  const [ready, setReady] = useState(false);
+  const [seeked, setSeeked] = useState(false);
+
+  useEffect(() => {
+    if (ref.current && ready && track && track.thumbnailTime && !track.thumbnailUri) {
+      ref.current.seekTo(parseFloat(track.thumbnailTime.time), "seconds");
+    }
+  }, [dispatch, ready, track]);
+
+  useEffect(() => {
+    if (ref.current && ready && track && track.thumbnailTime && !track.thumbnailUri
+      && seeked) {
+      const videoElement = ref.current?.getInternalPlayer() as HTMLVideoElement;
+      const canvas = document.createElement("canvas");
+      canvas.width = videoElement.videoWidth;
+      canvas.height = videoElement.videoHeight;
+      const canvasContext = canvas.getContext("2d");
+      if (canvasContext !== null) {
+        canvasContext.drawImage(videoElement, 0, 0);
+        const uri = canvas.toDataURL("image/png");
+
+        if (uri) {
+          dispatch(setThumbnail({ id: track.id, uri: uri }));
+        }
+      }
+    }
+  }, [dispatch, ready, seeked, track]);
+
+  const playerStyle = css({
+    display: "none",
+  });
+
+  if (!thumbnailTrack) {
+    return null;
+  }
+
+  return (
+    <ReactPlayer url={thumbnailTrack.uri}
+      css={playerStyle}
+      ref={ref}
+      width="unset"
+      height="100%"
+      playing={false}
+      onReady={() => setReady(true)}
+      onSeek={() => setSeeked(true)}
+    />
   );
 };
 

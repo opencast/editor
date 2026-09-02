@@ -115,6 +115,7 @@ const VideoPlayers: React.FC<{
 export interface VideoPlayerForwardRef {
   captureVideo: () => string | undefined,
   getWidth: () => number,
+  getCurrentTime: () => number,
 }
 
 interface VideoPlayerProps {
@@ -391,6 +392,9 @@ export const VideoPlayer = React.forwardRef<VideoPlayerForwardRef, VideoPlayerPr
       },
       getWidth() {
         return ref.current?.clientWidth ?? 0;
+      },
+      getCurrentTime() {
+        return (ref.current?.getInternalPlayer() as HTMLVideoElement).currentTime;
       },
     }));
 
