@@ -72,7 +72,7 @@
     "@types/node": "^25.9.1",
     "@types/react-beforeunload": "^2.1.5",
     "@vitejs/plugin-react": "^6.1.1",
-    "eslint": "^9.30.0",
+    "eslint": "^10.9.1",
     "jsdom": "^30.0.1",
     "typescript-eslint": "^8.68.0",
     "vite": "^8.2.2",
