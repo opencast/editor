@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { css } from "@emotion/react";
 import { Alert, Checkbox, FormControlLabel } from "@mui/material";
 
@@ -7,12 +7,10 @@ import ReactPlayer from "react-player";
 import { Track } from "../types";
 import {
   selectAudiosOnly,
-  selectCustomizedTrackSelection,
   selectTracks,
   selectVideos,
   selectWaveformImages,
   setAudioEnabled,
-  setCustomizedTrackSelection,
   setVideoEnabled,
 } from "../redux/videoSlice";
 import {
@@ -65,7 +63,7 @@ const TrackSelection: React.FC = () => {
     );
   }
   const images = useAppSelector(selectWaveformImages);
-  const customizedTrackSelection = !!useAppSelector(selectCustomizedTrackSelection);
+  const [customizedTrackSelection, setCustomizedTrackSelection] = useState(false);
 
   const videoTrackItems = videos.map(
     (track: Track) => (
@@ -107,7 +105,7 @@ const TrackSelection: React.FC = () => {
       });
     }
 
-    dispatch(setCustomizedTrackSelection(!customizedTrackSelection));
+    setCustomizedTrackSelection(!customizedTrackSelection);
   };
 
   const isDisabledBecauseMoreThanTwoVideos = () => {
