@@ -137,7 +137,6 @@ const SubtitleVideoArea: React.FC<{
             changeFlavorcallback={setSelectedFlavor}
             defaultFlavor={selectedFlavor}
           />}
-          {/* TODO: Make preview mode work or remove it */}
           <VideoPlayer
             dataKey={0}
             url={getTrackURI()}
