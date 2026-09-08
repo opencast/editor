@@ -150,7 +150,6 @@ export const useZoomableTimeline = (
  * A container for visualizing the cutting of the video, as well as for controlling
  * the current position in the video
  * Its width corresponds to the duration of the video
- * TODO: Figure out why ResizeObserver does not update anymore if we stop passing the width to the SegmentsList
  */
 const Timeline: React.FC<{
   timelineHeight?: number,
