@@ -43,7 +43,6 @@ export const postVideoInformation =
       {
         segments: convertSegments(argument.segments),
         tracks: argument.tracks,
-        customizedTrackSelection: argument.customizedTrackSelection,
         subtitles: argument.subtitles,
         chapters: argument.chapters,
         workflows: argument.workflow,
