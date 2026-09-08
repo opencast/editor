@@ -24,12 +24,6 @@ import { setCurrentlyAt } from "../redux/subtitleSlice";
 
 /**
  * A part of the subtitle editor that displays a video and related controls
- *
- * A bug in the react-player module prevents hotloading subtitle files:
- * https://github.com/cookpete/react-player/issues/1162
- * We have "fixed" this in a fork https://github.com/Arnei/react-player, because
- * coming up with a proper fix appears to be rather difficult
- * TODO: Come up with a proper fix and create a PR
  */
 const SubtitleVideoArea: React.FC<{
   selectIsPlaying: (state: RootState) => boolean,
