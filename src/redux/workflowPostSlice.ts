@@ -55,7 +55,6 @@ export const postVideoInformation =
 
 /**
  * Slice for managing a post request for saving current changes
- * TODO: Create a wrapper for this and workflowPostAndProcessSlice
  */
 const workflowPostSlice = createSlice({
   name: "workflowPostState",
