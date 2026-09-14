@@ -101,7 +101,7 @@ jobs:
 
       - name: Check for changes in translations
         if: steps.filter_locales.outputs.locales == true
-        uses: actions/github-script@v8
+        uses: actions/github-script@v9
         with:
           script: |
               core.setFailed('You should not alter translations outside of Crowdin.')
