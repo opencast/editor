@@ -11,7 +11,6 @@ import {
 import { Theme, useTheme } from "../themes";
 import {
   selectOriginalThumbnails,
-  selectVideos,
   selectTracks,
   setHasChanges,
   setThumbnail,
@@ -27,7 +26,7 @@ import { setIndex, setIsDisplayEditView } from "../redux/thumbnailSlice";
  */
 const ThumbnailSelect: React.FC = () => {
 
-  const videoTracks = useAppSelector(selectVideos);
+  const tracks = useAppSelector(selectTracks);
 
   const thumbnailSelectStyle = css({
     display: "flex",
@@ -42,7 +41,7 @@ const ThumbnailSelect: React.FC = () => {
 
   return (
     <div css={thumbnailSelectStyle}>
-      {videoTracks.map((track: Track, index: number) => (
+      {tracks.map((track: Track, index: number) => (
         <ThumbnailSelector
           key={index}
           track={track}
@@ -177,10 +176,12 @@ const ThumbnailButtons: React.FC<{
         track={track}
         index={0}
       />
-      <ToGenerationButton
-        trackIndex={trackIndex}
-        index={1}
-      />
+      {track.video_stream.available &&
+        <ToGenerationButton
+          trackIndex={trackIndex}
+          index={1}
+        />
+      }
       <DiscardButton
         track={track}
         index={2}

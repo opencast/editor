@@ -3,7 +3,7 @@ import { css } from "@emotion/react";
 import { RootState, ThunkApiConfig, useAppSelector } from "../redux/store";
 import {
   selectIsMuted,
-  selectVideos,
+  selectTracks,
   selectVolume,
   selectJumpTriggered,
   setIsMuted,
@@ -63,7 +63,7 @@ const SubtitleVideoArea: React.FC<{
   setCurrentlyAtAndTriggerPreview,
 }) => {
 
-  const tracks = useAppSelector(selectVideos);
+  const tracks = useAppSelector(selectTracks);
   const subtitle = useAppSelector(selectSelectedSubtitleById);
   const [selectedFlavor, setSelectedFlavor] = useState<Flavor>();
   const [subtitleUrl, setSubtitleUrl] = useState("");
@@ -100,6 +100,14 @@ const SubtitleVideoArea: React.FC<{
     }
     if (tracks.length > 0) {
       return tracks[0].uri;
+    }
+  };
+
+  const isAudioOnly = () => {
+    for (const track of tracks) {
+      if (track.flavor.type === selectedFlavor?.type && track.flavor.subtype === selectedFlavor?.subtype) {
+        return !track.video_stream.available;
+      }
     }
   };
 
@@ -143,6 +151,7 @@ const SubtitleVideoArea: React.FC<{
             subtitleUrl={subtitleUrl}
             first={true}
             last={true}
+            audioOnly={isAudioOnly()}
             selectIsPlaying={selectIsPlaying}
             selectIsMuted={selectIsMuted}
             selectCurrentlyAtInSeconds={selectCurrentlyAtInSeconds}

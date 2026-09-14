@@ -29,8 +29,8 @@ export interface video {
   waveformImages: string[];
   originalThumbnails: { id: Track["id"], uri: Track["thumbnailUri"]; }[];
 
-  videoURLs: string[],  // Links to each video
-  videoCount: number,   // Total number of videos
+  trackURLs: string[],  // Links to each track
+  trackCount: number,   // Total number of tracks
   duration: number,     // Video duration in milliseconds. Can be null due to Opencast internal error
   title: string,
   presenters: string[],
@@ -69,8 +69,8 @@ export const initialState: video & httpRequestState = {
   waveformImages: [],
   originalThumbnails: [],
 
-  videoURLs: [],
-  videoCount: 0,
+  trackURLs: [],
+  trackCount: 0,
   duration: 0,
   title: "",
   presenters: [],
@@ -358,9 +358,8 @@ const videoSlice = createSlice({
             }
             return track;
           });
-        const videos = state.tracks.filter((track: Track) => track.video_stream.available === true);
-        state.videoURLs = videos.reduce((a: string[], o: { uri: string; }) => (a.push(o.uri), a), []);
-        state.videoCount = state.videoURLs.length;
+        state.trackURLs = state.tracks.reduce((a: string[], o: { uri: string; }) => (a.push(o.uri), a), []);
+        state.trackCount = state.trackURLs.length;
         state.subtitlesFromOpencast = payload.subtitles ?
           state.subtitlesFromOpencast = payload.subtitles : [];
         state.chaptersFromOpencast = payload.chapters ?
@@ -413,8 +412,10 @@ const videoSlice = createSlice({
     selectOriginalThumbnails: state => state.originalThumbnails,
     // Selectors mainly pertaining to the information fetched from Opencast
     selectVideos: state => state.tracks.filter((track: Track) => track.video_stream.available === true),
-    selectVideoURL: state => state.videoURLs,
-    selectVideoCount: state => state.videoCount,
+    selectTrackURLs: state => state.trackURLs,
+    selectTrackCount: state => state.trackCount,
+    selectAudiosOnly: state => state.tracks.filter((track: Track) =>
+      !track.video_stream.available === true && track.audio_stream.available),
     selectDuration: state => state.duration,
     selectDurationInSeconds: state => state.duration / 1000,
     selectTitle: state => state.title,
@@ -628,8 +629,8 @@ export const {
   selectTimelineZoom,
   selectWaveformImages,
   selectOriginalThumbnails,
-  selectVideoURL,
-  selectVideoCount,
+  selectTrackURLs,
+  selectTrackCount,
   selectDuration,
   selectDurationInSeconds,
   selectTitle,
@@ -641,6 +642,7 @@ export const {
   selectChaptersFromOpencast,
   selectChaptersFromOpencastById,
   selectVideos,
+  selectAudiosOnly,
   selectDisplayDuration,
   selectPrimaryThumbnailTrack,
 } = videoSlice.selectors;

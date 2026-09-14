@@ -18,7 +18,6 @@ import {
   setIsPlayPreview,
   jumpToPreviousSegment,
   jumpToNextSegment,
-  selectVideos,
   cut,
   mergeAll,
   mergeLeft,
@@ -48,7 +47,6 @@ const Cutting: React.FC = () => {
     state.videoState.status);
   const error = useAppSelector((state: { videoState: { error: httpRequestState["error"]; }; }) =>
     state.videoState.error);
-  const videos = useAppSelector(selectVideos);
   const duration = useAppSelector(selectDuration);
   const theme = useTheme();
   const errorReason = useAppSelector((state: { videoState: { errorReason: httpRequestState["errorReason"]; }; }) =>
@@ -75,14 +73,6 @@ const Cutting: React.FC = () => {
         }));
       }
     } else if (videoURLStatus === "success") {
-      // Editor can not handle events with no videos/audio-only atm
-      if (videos === null || videos.length === 0) {
-        dispatch(setError({
-          error: true,
-          errorMessage: t("error.noVideoError-text"),
-          errorDetails: error,
-        }));
-      }
       if (duration === null) {
         dispatch(setError({
           error: true,
@@ -91,7 +81,7 @@ const Cutting: React.FC = () => {
         }));
       }
     }
-  }, [videoURLStatus, dispatch, error, t, errorReason, duration, videos]);
+  }, [videoURLStatus, dispatch, error, t, errorReason, duration]);
 
   // Already try fetching Metadata to reduce wait time
   useEffect(() => {
