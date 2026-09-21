@@ -220,8 +220,7 @@
       "unauthorizedError-text": "You are not allowed to edit this video",
       "comError-text": "Er is een probleem opgetreden tijdens de communicatie met Opencast.",
       "loadError-text": "Er is een fout opgetreden tijdens het laden van deze video.",
-      "durationError-text": "Opencast failed to provide the video duration.",
-      "noVideoError-text": "The editor does not support audio files yet!"
+      "durationError-text": "Opencast failed to provide the video duration."
     },
     "landing": {
       "main-heading": "Welkom in de Video Editor",

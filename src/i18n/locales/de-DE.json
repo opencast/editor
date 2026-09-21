@@ -220,8 +220,7 @@
       "unauthorizedError-text": "You are not allowed to edit this video",
       "comError-text": "Bei der Kommunikation mit Opencast ist ein Problem aufgetreten.",
       "loadError-text": "Beim Laden des Videos ist ein Fehler aufgetreten.",
-      "durationError-text": "Opencast konnte die Video-Dauer nicht angeben.",
-      "noVideoError-text": "The editor does not support audio files yet!"
+      "durationError-text": "Opencast konnte die Video-Dauer nicht angeben."
     },
     "landing": {
       "main-heading": "Willkommen im Video-Editor",

@@ -220,8 +220,7 @@
       "unauthorizedError-text": "You are not allowed to edit this video",
       "comError-text": "與 Opencast 通訊時出現問題。",
       "loadError-text": "載入此影片時出現錯誤。",
-      "durationError-text": "Opencast failed to provide the video duration.",
-      "noVideoError-text": "The editor does not support audio files yet!"
+      "durationError-text": "Opencast failed to provide the video duration."
     },
     "landing": {
       "main-heading": "歡迎使用影片編輯器",

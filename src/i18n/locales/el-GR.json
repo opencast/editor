@@ -220,8 +220,7 @@
       "unauthorizedError-text": "You are not allowed to edit this video",
       "comError-text": "Προέκυψε πρόβλημα κατά την επικοινωνία με το Opencast.",
       "loadError-text": "Παρουσιάστηκε σφάλμα κατά τηn φόρτωση του βίντεο.",
-      "durationError-text": "Το Opencast απέτυχε να παρέχει τη διάρκεια του βίντεο.",
-      "noVideoError-text": "The editor does not support audio files yet!"
+      "durationError-text": "Το Opencast απέτυχε να παρέχει τη διάρκεια του βίντεο."
     },
     "landing": {
       "main-heading": "Καλώς ήρθατε στον επεξεργαστή βίντεο",
