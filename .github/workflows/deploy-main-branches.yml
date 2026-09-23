@@ -76,8 +76,8 @@ jobs:
 
       - name: Commit new version
         run: |
-          # Save the current assets from the main branch
-          mv .github/assets assets_temp
+          # Save the landing page template, it does not exist in the gh-pages branch
+          cp .github/assets/index.html "$RUNNER_TEMP/template.html"
           # Update and change to the gh-pages branch
           git fetch --unshallow origin gh-pages
           git checkout gh-pages
@@ -85,24 +85,18 @@ jobs:
           rm -rf $BRANCH
           mv build $BRANCH
           #Generate an index, in case anyone lands at the root of the test domain
-          echo $'<html><head><link rel=stylesheet type=text/css href=assets/index.css /></head><body><div class="head-container"><img src=assets/opencast-white.svg /></div><div class="navbar-container"></div><div class="text-container"><p>Deployment for the latest development versions of the Opencast editor.The branches listed here correspond to Opencast\'s own branches.</br><b>Please select a version.</b></p></div><ul>' > index.html
           find . -mindepth 1 -maxdepth 1 -type d \
+            | sed 's|^\./||' \
             | grep '[0-9]*.x\|develop' \
             | sort -r \
-            | sed 's/^\(.*\)$/<li><a href=\1>\1<\/a><\/li>/' >> index.html
-          echo '</ul></body></html>' >> index.html
+            | sed 's|^\(.*\)$|<a href="\1">\1</a>|' > "$RUNNER_TEMP/versions.html"
+          awk -v versions="$(cat "$RUNNER_TEMP/versions.html")" \
+            '{ sub(/<!-- VERSIONS -->/, versions) } 1' \
+            "$RUNNER_TEMP/template.html" > index.html
           git add $BRANCH index.html
           git diff --staged --quiet || git commit --amend -m "Build $(date)"
         env:
           BRANCH: ${{needs.detect-repo-owner.outputs.branch}}
-
-      - name: update CSS and other assets
-        if: github.ref == 'refs/heads/develop'
-        run: |
-          rm -rf assets
-          mv assets_temp assets
-          git add assets
-          git diff --staged --quiet || git commit --amend -m "Build $(date)"
 
       - name: Push updates
         run: git push origin gh-pages --force
