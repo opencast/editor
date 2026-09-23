@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { client } from "../util/client";
 import { Segment, PostEditArgument, httpRequestState } from "../types";
 import { settings } from "../config";
@@ -64,6 +64,10 @@ const workflowPostSlice = createSlice({
     resetPostRequestState: state => {
       state.status = "idle";
     },
+    setPostRequestError: (state, action: PayloadAction<httpRequestState["error"]>) => {
+      state.status = "failed";
+      state.error = action.payload;
+    },
   },
   extraReducers: builder => {
     builder.addCase(
@@ -110,7 +114,7 @@ export const convertSegments = (segments: Segment[]) => {
   return newSegments;
 };
 
-export const { resetPostRequestState } = workflowPostSlice.actions;
+export const { resetPostRequestState, setPostRequestError } = workflowPostSlice.actions;
 
 export const { selectStatus, selectError } = workflowPostSlice.selectors;
 

@@ -17,7 +17,7 @@ import {
   selectTracks,
   setHasChanges as videoSetHasChanges,
 } from "../redux/videoSlice";
-import { postVideoInformation, selectStatus, selectError } from "../redux/workflowPostSlice";
+import { postVideoInformation, selectStatus, selectError, setPostRequestError } from "../redux/workflowPostSlice";
 
 import { CallbackButton, PageButton } from "./Finish";
 
@@ -39,7 +39,7 @@ import { Spinner } from "@opencast/appkit";
 import { ProtoButton } from "@opencast/appkit";
 import { setEnd } from "../redux/endSlice";
 import { selectSubtitles as selectChapters } from "../redux/chapterSlice";
-import { SubtitlesInEditor } from "../types";
+import { Segment, SubtitlesInEditor } from "../types";
 
 /**
  * Shown if the user wishes to save.
@@ -165,7 +165,23 @@ export const SaveButton: React.FC<{
       deleted,
     }));
 
+  const validateSegmentLength = (segments: Segment[]) => {
+    let okay = false;
+    for (const segment of segments) {
+      if (!segment.deleted && (segment.end - segment.start > 2000)) {
+        okay = true;
+      }
+    }
+    return okay;
+  };
+
   const save = () => {
+    if (!validateSegmentLength(segments)) {
+      dispatch(setPostRequestError(
+        t("workflowSelection.error-segmentsTooShort"),
+      ));
+      return;
+    }
     dispatch(postVideoInformation({
       segments: segments,
       tracks: tracks,

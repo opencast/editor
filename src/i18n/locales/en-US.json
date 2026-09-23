@@ -108,7 +108,8 @@
       "startProcessing-button": "Start processing",
       "back-button": "Take me back",
       "selectWF-button": "Click to select this workflow",
-      "selectWF-button-aria": "Press to select the workflow: {{stateName}}\n"
+      "selectWF-button-aria": "Press to select the workflow: {{stateName}}\n",
+      "error-segmentsTooShort": "The remaining cutting segments are too short. Make sure that at least one segment is at least 2 seconds long. If you are trying to remove the video track, use the track selection menu."
     },
 
     "timeline": {
