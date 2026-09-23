@@ -52,16 +52,19 @@ jobs:
         run: |
           tar xf ${{ runner.temp }}/build.tar
 
-      - name: Fetch pr number from GHA
+      - name: Fetch build path from GHA
         uses: actions/download-artifact@v4
         with:
-          name: ${{ github.event.workflow_run.id }}-number
+          name: ${{ github.event.workflow_run.id }}-path
           github-token: ${{ github.token }}
           run-id: ${{ github.event.workflow_run.id }}
 
-      - name: Read PR Number
+      - name: Read build path and extract PR number
         run: |
-          echo "PR_NUMBER=$(cat pr_number.txt)" >> $GITHUB_ENV
+          # This looks like 12345/yyyy-mm-dd HH-MM-SS
+          echo "BUILD_PATH=$(cat build_path.txt)" >> $GITHUB_ENV
+          # This extracts just the first field, so the PR number itself
+          echo "PR_NUMBER=$(cat build_path.txt | cut -f 1 -d '/')" >> $GITHUB_ENV
 
       - name: Store build in the clone
         run: |
@@ -90,7 +93,7 @@ jobs:
         working-directory: editor-test
         run: |
           git add .
-          git commit --amend -m "Build ${{ steps.build-path.outputs.build }}"
+          git commit --amend -m "Build ${{ env.BUILD_PATH }}"
 
       - name: Push updates
         working-directory: editor-test
@@ -104,7 +107,7 @@ jobs:
           comment-tag: static-test-deployment
           message: >
             This pull request is deployed at
-            [test.editor.opencast.org/${{ steps.build-path.outputs.build }}
-            ](https://test.editor.opencast.org/${{ steps.build-path.outputs.build }}).
+            [test.editor.opencast.org/${{ env.BUILD_PATH }}
+            ](https://test.editor.opencast.org/${{ env.BUILD_PATH }}).
 
             It might take a few minutes for it to become available.
