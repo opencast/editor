@@ -71,14 +71,14 @@ jobs:
           path: ${{ runner.temp }}/build.tar
 
         # This is stupid, but GHA currently zeros out the pull_requests list in forked repos
-        # so we have no way to get at this number without going through PRs and matching via hash
-      - name: Save PR Number to disk
-        run: echo "${{ github.event.number }}" > pr_number.txt
+        # so we have no way to get at this without going through PRs and matching via hash
+      - name: Save build path to disk
+        run: echo "${{ steps.build-path.outputs.build }}" > build_path.txt
 
       - uses: actions/upload-artifact@v4
         with:
-          name: ${{ github.run_id }}-number
-          path: pr_number.txt
+          name: ${{ github.run_id }}-path
+          path: build_path.txt
 
 
   check-no-modified-translations:
