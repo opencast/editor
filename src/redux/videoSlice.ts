@@ -27,7 +27,7 @@ export interface video {
   hasChanges: boolean,            // Did user make changes in cutting view since last save
   timelineZoom: number,           // Zoom multiplicator for the timeline,
   waveformImages: string[];
-  originalThumbnails: { id: Track["id"], uri: Track["thumbnailUri"]; }[];
+  originalThumbnails: { id: Track["id"], uri: Track["thumbnailUri"], time: Track["thumbnailTime"]; }[];
 
   trackURLs: string[],  // Links to each track
   trackCount: number,   // Total number of tracks
@@ -233,10 +233,18 @@ const videoSlice = createSlice({
     setThumbnail: (state, action: PayloadAction<{ id: Track["id"], uri: Track["thumbnailUri"]; }>) => {
       setThumbnailHelper(state, action.payload.id, action.payload.uri);
     },
-    setThumbnails: (state, action: PayloadAction<{ id: Track["id"], uri: Track["thumbnailUri"]; }[]>) => {
+    setThumbnails: (state, action: PayloadAction<{
+      id: Track["id"],
+      uri: Track["thumbnailUri"],
+      time: Track["thumbnailTime"];
+    }[]>) => {
       for (const element of action.payload) {
         setThumbnailHelper(state, element.id, element.uri);
+        setThumbnailTimeHelper(state, element.id, element.time);
       }
+    },
+    setThumbnailTime: (state, action: PayloadAction<{ id: Track["id"], time: Track["thumbnailTime"]; }>) => {
+      setThumbnailTimeHelper(state, action.payload.id, action.payload.time);
     },
     removeThumbnail: (state, action: PayloadAction<string>) => {
       const index = state.tracks.findIndex(t => t.id === action.payload);
@@ -376,7 +384,7 @@ const videoSlice = createSlice({
           return waveformURI;
         }) : state.waveformImages;
         state.originalThumbnails = state.tracks.map(
-          (track: Track) => { return { id: track.id, uri: track.thumbnailUri }; },
+          (track: Track) => { return { id: track.id, uri: track.thumbnailUri, time: track.thumbnailTime }; },
         );
 
         state.lockingActive = payload.locking_active;
@@ -574,6 +582,13 @@ const setThumbnailHelper = (state: video, id: Track["id"], uri: Track["thumbnail
   }
 };
 
+const setThumbnailTimeHelper = (state: video, id: Track["id"], time: Track["thumbnailTime"]) => {
+  const index = state.tracks.findIndex(t => t.id === id);
+  if (index >= 0) {
+    state.tracks[index].thumbnailTime = time;
+  }
+};
+
 export const {
   addSegment,
   cut,
@@ -604,6 +619,7 @@ export const {
   setSelectedWorkflowIndex,
   setThumbnail,
   setThumbnails,
+  setThumbnailTime,
   setVideoEnabled,
   setVolume,
   setWaveformImages,
