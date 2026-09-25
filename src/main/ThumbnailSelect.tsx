@@ -128,7 +128,7 @@ const ThumbnailDisplayer: React.FC<{
   });
 
   const placeholderStyle = css({
-    width: "100vw", // TODO: This is necessary to make the placeholder large enough, but prevents it from shrinking
+    width: "100%",
     maxWidth: "457px",
     backgroundColor: "grey",
     display: "flex",
