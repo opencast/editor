@@ -101,7 +101,8 @@
       "startProcessing-button": "開始處理",
       "back-button": "回到上一步",
       "selectWF-button": "單擊以選擇此工作流程",
-      "selectWF-button-aria": "按下要選擇的工作流程：{{stateName}}\n"
+      "selectWF-button-aria": "按下要選擇的工作流程：{{stateName}}\n",
+      "error-segmentsTooShort": "The remaining cutting segments are too short. Make sure that at least one segment is at least 2 seconds long. If you are trying to remove the video track, use the track selection menu."
     },
     "timeline": {
       "generateWaveform-text": "生成波形",

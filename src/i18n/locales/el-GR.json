@@ -101,7 +101,8 @@
       "startProcessing-button": "Έναρξη επεξεργασίας",
       "back-button": "Πήγαινε με πίσω",
       "selectWF-button": "Κάντε κλικ για να επιλέξετε αυτήν τη ροή εργασίας",
-      "selectWF-button-aria": "Πατήστε για να επιλέξετε τη ροή εργασίας: {{stateName}}\n"
+      "selectWF-button-aria": "Πατήστε για να επιλέξετε τη ροή εργασίας: {{stateName}}\n",
+      "error-segmentsTooShort": "The remaining cutting segments are too short. Make sure that at least one segment is at least 2 seconds long. If you are trying to remove the video track, use the track selection menu."
     },
     "timeline": {
       "generateWaveform-text": "Δημιουργία Κυματομορφής",

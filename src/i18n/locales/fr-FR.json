@@ -101,7 +101,8 @@
       "startProcessing-button": "Démarrer le traitement",
       "back-button": "Revenir en arrière",
       "selectWF-button": "Cliquez pour sélectionner ce workflow",
-      "selectWF-button-aria": "Appuyez pour sélectionner le flux de travail : {{stateName}}\n"
+      "selectWF-button-aria": "Appuyez pour sélectionner le flux de travail : {{stateName}}\n",
+      "error-segmentsTooShort": "The remaining cutting segments are too short. Make sure that at least one segment is at least 2 seconds long. If you are trying to remove the video track, use the track selection menu."
     },
     "timeline": {
       "generateWaveform-text": "Génaration du Waveform",
