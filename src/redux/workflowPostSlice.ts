@@ -43,7 +43,6 @@ export const postVideoInformation =
       {
         segments: convertSegments(argument.segments),
         tracks: argument.tracks,
-        customizedTrackSelection: argument.customizedTrackSelection,
         subtitles: argument.subtitles,
         chapters: argument.chapters,
         workflows: argument.workflow,
@@ -55,7 +54,6 @@ export const postVideoInformation =
 
 /**
  * Slice for managing a post request for saving current changes
- * TODO: Create a wrapper for this and workflowPostAndProcessSlice
  */
 const workflowPostSlice = createSlice({
   name: "workflowPostState",

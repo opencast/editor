@@ -150,7 +150,6 @@ export const useZoomableTimeline = (
  * A container for visualizing the cutting of the video, as well as for controlling
  * the current position in the video
  * Its width corresponds to the duration of the video
- * TODO: Figure out why ResizeObserver does not update anymore if we stop passing the width to the SegmentsList
  */
 const Timeline: React.FC<{
   timelineHeight?: number,
@@ -223,6 +222,7 @@ const Timeline: React.FC<{
             ref={scrubberRef}
             timelineWidth={width}
             timelineHeight={timelineHeight}
+            stampsHeight={timelineStampsHeight}
             scrollContainerWidth={scrollContainerWidth}
             scrollLeft={scrollContainerRef.current?.scrollLeft ?? 0}
             scrollTheContainerbyOwnWidth={scrollByOwnWidth}
@@ -266,6 +266,7 @@ const Timeline: React.FC<{
 type ScrubberProps = {
   timelineWidth: number,
   timelineHeight: number,
+  stampsHeight: number,
   scrollContainerWidth: number,
   scrollLeft: number,
   scrollTheContainerbyOwnWidth: () => void,
@@ -280,7 +281,7 @@ type ScrubberProps = {
  * @param param0
  */
 export const Scrubber = React.forwardRef<HTMLDivElement, ScrubberProps>((props, nodeRef) => {
-  const { timelineWidth, timelineHeight, scrollContainerWidth, scrollLeft, scrollTheContainerbyOwnWidth,
+  const { timelineWidth, timelineHeight, stampsHeight, scrollContainerWidth, scrollLeft, scrollTheContainerbyOwnWidth,
     selectCurrentlyAt, selectIsPlaying, setCurrentlyAt, setIsPlaying } = props;
 
   const { t } = useTranslation();
@@ -406,7 +407,8 @@ export const Scrubber = React.forwardRef<HTMLDivElement, ScrubberProps>((props, 
 
   const scrubberStyle = css({
     backgroundColor: `${theme.scrubber}`,
-    height: timelineHeight + 20 + "px", //    TODO: CHECK IF height: "100%",
+    // Spans the full timeline, including the timestamp ruler above the waveform/segments area
+    height: timelineHeight + stampsHeight + "px",
     width: "1px",
     position: "absolute",
     zIndex: 20,
