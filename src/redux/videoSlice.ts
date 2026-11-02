@@ -18,7 +18,6 @@ export interface video {
   currentlyAt: number,            // Position in the video in milliseconds
   segments: Segment[],
   tracks: Track[],
-  customizedTrackSelection: boolean, // Did user select tracks for processing
   subtitlesFromOpencast: SubtitlesFromOpencast[],
   chaptersFromOpencast: SubtitlesFromOpencast[],
   activeSegmentIndex: number,     // Index of the segment that is currenlty hovered
@@ -55,7 +54,6 @@ export const initialState: video & httpRequestState = {
   currentlyAt: 0,   // Position in the video in milliseconds
   segments: [{ id: nanoid(), start: 0, end: 1, deleted: false }],
   tracks: [],
-  customizedTrackSelection: false,
   subtitlesFromOpencast: [],
   chaptersFromOpencast: [],
   activeSegmentIndex: 0,
@@ -102,7 +100,6 @@ type FetchVideoInformation = {
   subtitles: video["subtitlesFromOpencast"],
   chapters:video["subtitlesFromOpencast"],
   local: boolean,
-  customizedTrackSelection: boolean, // TODO: Figure out if this still exists
 }
 
 export const fetchVideoInformation = createAppAsyncThunk("video/fetchVideoInformation", async () => {
@@ -330,9 +327,6 @@ const videoSlice = createSlice({
       mergeSegments(state, state.activeSegmentIndex, state.segments.length - 1);
       state.hasChanges = true;
     },
-    setCustomizedTrackSelection: (state, action: PayloadAction<video["customizedTrackSelection"]>) => {
-      state.customizedTrackSelection = action.payload;
-    },
     timelineZoomIn: state => {
       state.timelineZoom = clamp(state.timelineZoom + 0.01, 0, 1);
     },
@@ -391,7 +385,6 @@ const videoSlice = createSlice({
         state.lockRefresh = payload.lock_refresh;
         state.lock.uuid = payload.lock_uuid;
         state.lock.user = payload.lock_user;
-        state.customizedTrackSelection = payload.customizedTrackSelection;
       });
     builder.addCase(
       fetchVideoInformation.rejected, (state, action) => {
@@ -428,7 +421,6 @@ const videoSlice = createSlice({
     selectDurationInSeconds: state => state.duration / 1000,
     selectTitle: state => state.title,
     selectTracks: state => state.tracks,
-    selectCustomizedTrackSelection: state => state.customizedTrackSelection,
     selectWorkflows: state => state.workflows,
     selectAspectRatio: state => calculateTotalAspectRatio(state.aspectRatios),
     selectSubtitlesFromOpencast: state => state.subtitlesFromOpencast,
@@ -608,7 +600,6 @@ export const {
   setClickTriggered,
   setCurrentlyAt,
   setCurrentlyAtInSeconds,
-  setCustomizedTrackSelection,
   setHasChanges,
   setIsMuted,
   setIsPlayPreview,
@@ -636,7 +627,6 @@ export const {
   selectJumpTriggered,
   selectCurrentlyAt,
   selectCurrentlyAtInSeconds,
-  selectCustomizedTrackSelection,
   selectSegments,
   selectActiveSegmentIndex,
   selectIsCurrentSegmentAlive,
