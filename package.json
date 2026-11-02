@@ -40,7 +40,7 @@
     "redux-persist": "^6.0.0",
     "smol-toml": "^1.8.0",
     "standardized-audio-context": "^25.3.77",
-    "typescript": "^6.0.3",
+    "typescript": "^7.0.2",
     "usehooks-ts": "^3.1.1",
     "uuid": "^14.0.2",
     "webvtt-parser": "^2.2.0"
