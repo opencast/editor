@@ -64,7 +64,7 @@ jobs:
           PUBLIC_URL: ${{ steps.build-path.outputs.build }}
 
       - name: Upload build to GHA
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ${{ github.run_id }}-build
           path: ${{ runner.temp }}/build.tar
@@ -74,7 +74,7 @@ jobs:
       - name: Save build path to disk
         run: echo "${{ steps.build-path.outputs.build }}" > build_path.txt
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: ${{ github.run_id }}-path
           path: build_path.txt
