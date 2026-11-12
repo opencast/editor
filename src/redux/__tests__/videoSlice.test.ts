@@ -3,7 +3,6 @@ import reducer, { initialState, setIsPlaying, selectIsPlaying, setCurrentlyAt,
   selectDuration, video, cut, selectSegments, markAsDeletedOrAlive, mergeRight,
   fetchVideoInformation, selectTitle,
   selectTracks, selectWorkflows, selectTrackURLs } from "../videoSlice";
-import cloneDeep from "lodash/cloneDeep";
 import { httpRequestState } from "../../types";
 
 
@@ -12,7 +11,7 @@ describe("Video reducer", () => {
   let initState: (video & httpRequestState);
 
   beforeEach(() => {
-    initState = cloneDeep(initialState);
+    initState = structuredClone(initialState);
   });
 
   it("should return the initial state on first run", () => {

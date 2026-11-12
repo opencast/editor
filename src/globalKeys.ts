@@ -9,7 +9,10 @@
  */
 import { match } from "@opencast/appkit";
 import { ParseKeys } from "i18next";
-import { isMacOs } from "react-device-detect";
+
+// Apple devices, including iPads and iPhones (their user agents contain "like Mac OS X"),
+// have an Option key on hardware keyboards.
+const isAppleDevice = /Mac/.test(navigator.userAgent);
 
 // Groups for displaying hotkeys in the overview page
 const groupVideoPlayer = "keyboardControls.groupVideoPlayer";
@@ -25,7 +28,7 @@ export const rewriteKeys = (key: string | IKey) => {
     key : key.splitKey ?
       key.key.replaceAll(key.splitKey, "+") : key.key;
 
-  return isMacOs ? newKey.replace("Alt", "Option") : newKey;
+  return isAppleDevice ? newKey.replace("Alt", "Option") : newKey;
 };
 
 export const getGroupName = (groupName: string): ParseKeys => {
