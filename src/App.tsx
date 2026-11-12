@@ -4,7 +4,7 @@ import { GlobalStyle } from "./cssStyles";
 
 function App() {
   return (
-    <div className="App" css={{ display: "flex", flexDirection: "column" }}>
+    <div css={{ height: "100%", display: "flex", flexDirection: "column" }}>
       <GlobalStyle />
       <Header />
       <Body />

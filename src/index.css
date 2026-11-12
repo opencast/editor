@@ -10,8 +10,3 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
-
-/* Make the Create React App fill the whole height */
-html, body, #root, .App {
-  height: 100%;
-}
