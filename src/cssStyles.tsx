@@ -53,7 +53,7 @@ export const globalStyle = (theme: Theme) => css({
     // Prevents an increase in font size when changing from portrait to landscape orientation in iOS Safari.
     WebkitTextSizeAdjust: "none",
     // Makes the body span to the bottom of the page
-    minHeight: "100vh",
+    minHeight: "100dvh",
   },
   // Some elements not inheriting fonts is a really confusing browser default.
   "input, button, textarea, select": {
