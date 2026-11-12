@@ -1,4 +1,4 @@
-import { debounce } from "lodash";
+import { debounce } from "lodash-es";
 import React, { useState, useRef, useEffect, RefObject, useLayoutEffect } from "react";
 
 import Draggable, { DraggableEventHandler } from "react-draggable";

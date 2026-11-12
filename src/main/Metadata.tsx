@@ -19,7 +19,6 @@ import Select from "react-select";
 import CreatableSelect from "react-select/creatable";
 
 import { useTranslation } from "react-i18next";
-import { DateTime as LuxonDateTime } from "luxon";
 
 import { configureFieldsAttributes, settings } from "../config";
 import { useTheme } from "../themes";
@@ -27,7 +26,8 @@ import { ThemeProvider } from "@mui/material/styles";
 import { ParseKeys } from "i18next";
 import { ErrorBox } from "@opencast/appkit";
 import { screenWidthAtMost } from "@opencast/appkit";
-import { debounce } from "lodash";
+import { debounce } from "lodash-es";
+import { isValid, parseISO } from "date-fns";
 import { isJson } from "../util/utilityFunctions";
 
 /**
@@ -565,18 +565,8 @@ const FieldValidation: React.FC<{ field: MetadataField }> = ({ field }) => {
       return undefined;
     }
 
-    let dt = undefined;
-    if (Object.prototype.toString.call(date) === "[object Date]") {
-      dt = LuxonDateTime.fromJSDate(date as Date);
-    }
-    if (typeof date === "string") {
-      dt = LuxonDateTime.fromISO(date);
-    }
-
-    if (dt) {
-      return dt.isValid ? undefined : t("metadata.validation.datetime");
-    }
-    return t("metadata.validation.datetime");
+    const valid = isValid(typeof date === "string" ? parseISO(date) : date);
+    return valid ? undefined : t("metadata.validation.datetime");
   };
 
   /**

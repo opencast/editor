@@ -1,7 +1,7 @@
 import { css, SerializedStyles } from "@emotion/react";
 import { IconType } from "react-icons";
 import { LuCopyPlus, LuPlus, LuTrash } from "react-icons/lu";
-import { memoize } from "lodash";
+import { memoize } from "lodash-es";
 import React, { useRef } from "react";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
