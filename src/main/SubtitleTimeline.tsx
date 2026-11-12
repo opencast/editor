@@ -404,7 +404,6 @@ const TimelineSubtitleSegment: React.FC<{
     background: `${theme.subtitle_segment_bg}`,
     border: `${theme.subtitle_segment_border}`,
     borderRadius: "5px",
-    boxSizing: "border-box",
     color: `${theme.subtitle_segment_text}`,
     zIndex: 1,
 
