@@ -170,6 +170,7 @@ const SubtitleTimeline: React.FC = () => {
             ref={scrubberRef}
             timelineWidth={width}
             timelineHeight={timelineHeight}
+            stampsHeight={timelineStampsHeight}
             scrollContainerWidth={scrollContainerWidth}
             scrollLeft={scrollContainerRef.current?.scrollLeft ?? 0}
             scrollTheContainerbyOwnWidth={scrollByOwnWidth}

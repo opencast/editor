@@ -135,8 +135,9 @@ const SubtitleSelect: React.FC = () => {
   return (
     <div css={subtitleSelectStyle}>
       {renderButtons()}
-      {/* TODO: Only show the add button when there are still languages to add*/}
-      <SubtitleAddButton subtitlesForDropdown={canBeAddedSubtitles} />
+      {canBeAddedSubtitles.length > 0 &&
+        <SubtitleAddButton subtitlesForDropdown={canBeAddedSubtitles} />
+      }
     </div>
   );
 };
