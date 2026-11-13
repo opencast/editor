@@ -28,14 +28,14 @@ const Body: React.FC = () => {
       );
     } else if (isEnd) {
       return (
-        <div>
+        <div css={fillRemainingStyle}>
           <Lock />
           <TheEnd />
         </div>
       );
     } else if (isError) {
       return (
-        <div css={css({ height: "calc(100% - 64px)" })}>
+        <div css={fillRemainingStyle}>
           <Error />
         </div>
       );
@@ -50,11 +50,15 @@ const Body: React.FC = () => {
     }
   };
 
-  const bodyStyle = css({
+  const fillRemainingStyle = css({
+    flex: 1,
+    minHeight: 0,
+  });
+
+  const bodyStyle = css([fillRemainingStyle, {
     display: "flex",
     flexDirection: "row",
-    height: "calc(100% - 64px)",
-  });
+  }]);
 
   return (
     <React.Fragment>

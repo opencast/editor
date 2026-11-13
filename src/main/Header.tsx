@@ -34,6 +34,8 @@ function Header() {
 
   const headerStyle = css({
     display: "flex",
+    height: "64px",
+    flexShrink: 0,
     alignItems: "center",
     justifyContent: "space-between",
     backgroundColor: `${theme.header_bg}`,
@@ -41,12 +43,9 @@ function Header() {
 
   const headerStyleThemed = scheme.includes("high-contrast-")
     ? css({
-      height: "62px",
       borderBottom: "2px solid white",
     })
-    : css({
-      height: "64px",
-    });
+    : undefined;
 
   const rightSideButtonsStyle = css({
     display: "flex",
