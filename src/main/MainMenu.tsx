@@ -34,6 +34,8 @@ const MainMenu: React.FC = () => {
   const theme = useTheme();
 
   const mainMenuStyle = css({
+    // The widths below exclude the padding
+    boxSizing: "content-box",
     borderRight: `${theme.menuBorder}`,
     minWidth: "120px",
     maxWidth: "140px",

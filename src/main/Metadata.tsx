@@ -112,7 +112,6 @@ const Catalog: React.FC<Props> = ({ id }) => {
     borderRadius: "5px",
     boxShadow: `${theme.boxShadow_tiles}`,
     marginTop: "24px",
-    boxSizing: "border-box",
     padding: "10px",
   });
 

@@ -30,12 +30,13 @@ const Group: React.FC<{
     background: `${theme.menu_background}`,
     borderRadius: "5px",
     boxShadow: `${theme.boxShadow_tiles}`,
-    boxSizing: "border-box",
     padding: "0px 20px 20px 20px",
   });
 
   const headingStyle = css({
     color: `${theme.text}`,
+    // The global reset removes the margin of headings
+    margin: "1em 0",
   });
 
   return (

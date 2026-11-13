@@ -444,6 +444,8 @@ const SubtitleListSegment : React.FC<{
   const { scheme } = useColorScheme();
 
   const segmentStyle = css({
+    // The height excludes the padding (see PADDING_SIZE)
+    boxSizing: "content-box",
     display: "flex",
     flexDirection: "row",
     justifyContent: "space-around",
@@ -492,6 +494,10 @@ const SubtitleListSegment : React.FC<{
   });
 
   const fieldStyle = css({
+    // Sizes set for the field exclude padding and border
+    boxSizing: "content-box",
+    // The field height is fixed, so a taller inherited line-height would push the text off-center
+    lineHeight: "normal",
     fontSize: "1em",
     marginLeft: "15px",
     marginRight: "2px",
@@ -508,6 +514,10 @@ const SubtitleListSegment : React.FC<{
   });
 
   const timeInputStyle = css({
+    // Sizes set for the field exclude padding and border
+    boxSizing: "content-box",
+    // The field height is fixed, so a taller inherited line-height would push the text off-center
+    lineHeight: "normal",
     fontSize: "1em",
     padding: "10px",
     borderRight: "none",

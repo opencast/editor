@@ -13,8 +13,8 @@ const Landing: React.FC = () => {
   const { t } = useTranslation();
 
   const landingStyle = css({
-    height: "100%",
     display: "flex",
+    flex: 1,
     flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",

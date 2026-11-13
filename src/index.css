@@ -1,5 +1,4 @@
 body, textarea, input {
-  margin: 0;
   font-family: "Roboto Flex Variable", "Roboto", -apple-system, BlinkMacSystemFont, "Segoe UI", "Oxygen",
     "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
     sans-serif;
@@ -10,9 +9,4 @@ body, textarea, input {
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
-}
-
-/* Make the Create React App fill the whole height */
-html, body, #root, .App {
-  height: 100%;
 }
