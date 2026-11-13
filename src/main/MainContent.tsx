@@ -4,7 +4,6 @@ import Metadata from "./Metadata";
 import TrackSelection from "./TrackSelection";
 import Subtitle from "./Subtitle";
 import Finish from "./Finish";
-import KeyboardControls from "./KeyboardControls";
 
 import { LuWrench } from "react-icons/lu";
 
@@ -80,10 +79,6 @@ const MainContent: React.FC = () => {
     justifyContent: "space-around",
   });
 
-  const keyboardControlsStyle = css({
-    flexDirection: "column",
-  });
-
   const defaultStyle = css({
     flexDirection: "column",
     alignItems: "center",
@@ -150,14 +145,6 @@ const MainContent: React.FC = () => {
           ref={mainRef} tabIndex={-1} style={{ outline: "none" }}
         >
           <Finish />
-        </div>
-      );
-    } else if (mainMenuState === MainMenuStateNames.keyboardControls) {
-      return (
-        <div css={[mainContentStyle, keyboardControlsStyle]} role="main"
-          ref={mainRef} tabIndex={-1} style={{ outline: "none" }}
-        >
-          <KeyboardControls />
         </div>
       );
     } else {

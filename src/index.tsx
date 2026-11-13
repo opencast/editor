@@ -16,6 +16,8 @@ import "@opencast/appkit/dist/colors.css";
 import { ColorSchemeProvider } from "@opencast/appkit";
 import { PersistGate } from "redux-persist/lib/integration/react";
 import { persistStore } from "redux-persist";
+import { HotkeysProvider } from "react-hotkeys-hook";
+import { HOTKEY_SCOPE } from "./globalKeys";
 
 const container = document.getElementById("root");
 if (!container) {
@@ -42,7 +44,9 @@ initialize.then(
         <Provider store={store}>
           <PersistGate loading={<div>loading...</div>} persistor={persistor}>
             <ColorSchemeProvider>
-              <App />
+              <HotkeysProvider initiallyActiveScopes={[HOTKEY_SCOPE]}>
+                <App />
+              </HotkeysProvider>
             </ColorSchemeProvider>
           </PersistGate>
         </Provider>
