@@ -408,6 +408,7 @@ const ChangeHotkeyContent: React.FC<{
     padding: "12px 16px",
     justifyContent: "space-around",
     boxShadow: `${theme.boxShadow}`,
+    border: `${theme.menuBorder}`,
     background: `${theme.element_bg}`,
   });
 
@@ -495,6 +496,7 @@ const DeleteHotkeyModal: React.FC<{
     padding: "12px 16px",
     justifyContent: "space-around",
     boxShadow: `${theme.boxShadow}`,
+    border: `${theme.menuBorder}`,
     background: `${theme.element_bg}`,
   });
 
