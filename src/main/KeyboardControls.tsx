@@ -8,8 +8,27 @@ import { basicButtonStyle, deactivatedButtonStyle, titleStyle, titleStyleBold } 
 import { useRecordHotkeys } from "react-hotkeys-hook";
 import { useAppDispatch, useAppSelector } from "../redux/store";
 import { resetHotkey, selectKeymap, setHotkey } from "../redux/hotkeySlice";
-import { Modal, ModalHandle, ProtoButton } from "@opencast/appkit";
-import { LuPen, LuRotateCcw, LuTrash } from "react-icons/lu";
+import {
+  KeyCombinationContainer, match, Modal, ModalHandle, ProtoButton, SingleKeyContainer,
+} from "@opencast/appkit";
+import {
+  LuArrowBigUp, LuArrowDown, LuArrowLeft, LuArrowRight, LuArrowUp, LuPen, LuRotateCcw, LuTrash,
+} from "react-icons/lu";
+
+/**
+ * Displays a single key. Arrows and Shift are shown with icons, everything else as text.
+ */
+const KeyCap: React.FC<{ keyName: string }> = ({ keyName }) => {
+  const content = match(keyName.toLowerCase(), {
+    up: () => <LuArrowUp />,
+    down: () => <LuArrowDown />,
+    left: () => <LuArrowLeft />,
+    right: () => <LuArrowRight />,
+    shift: () => <>{keyName}<LuArrowBigUp /></>,
+  }) ?? keyName;
+
+  return <SingleKeyContainer>{content}</SingleKeyContainer>;
+};
 
 const Group: React.FC<{
   id: string
@@ -115,17 +134,6 @@ const Entry: React.FC<{
     gap: "10px",
   });
 
-  const singleKeyStyle = css({
-    borderRadius: "4px",
-    borderWidth: "2px",
-    borderStyle: "solid",
-    borderColor: `${theme.singleKey_border}`,
-    background: `${theme.singleKey_bg}`,
-    boxShadow: `${theme.singleKey_boxShadow}`,
-    padding: "10px",
-    color: `${theme.text}`,
-  });
-
   const orStyle = css({
     alignSelf: "center",
     fontSize: "20px",
@@ -146,16 +154,9 @@ const Entry: React.FC<{
           <div css={sequencesStyle}>
             {formatEntry(entry).map((sequence, index, arr) => (
               <div css={sequenceStyle} key={index}>
-                {sequence.map((singleKey, index) => (
-                  <div key={index} css={sequenceStyle}>
-                    <div css={singleKeyStyle}>
-                      {singleKey}
-                    </div>
-                    {sequence.length - 1 !== index &&
-                      <div css={orStyle}>+</div>
-                    }
-                  </div>
-                ))}
+                <KeyCombinationContainer>
+                  {sequence.map((singleKey, index) => <KeyCap key={index} keyName={singleKey} />)}
+                </KeyCombinationContainer>
                 <div css={orStyle}><Trans>
                   {arr.length - 1 !== index && t("keyboardControls.sequenceSeparator")}
                 </Trans></div>
