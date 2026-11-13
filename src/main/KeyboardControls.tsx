@@ -15,6 +15,9 @@ import {
   LuArrowBigUp, LuArrowDown, LuArrowLeft, LuArrowRight, LuArrowUp, LuPen, LuRotateCcw, LuTrash,
 } from "react-icons/lu";
 
+// Recorded special keys are lowercase ("space", "escape"). Single characters are left as they are.
+const capitalize = (name: string) => name.length > 1 ? name[0].toUpperCase() + name.slice(1) : name;
+
 /**
  * Displays a single key. Arrows and Shift are shown with icons, everything else as text.
  */
@@ -24,8 +27,13 @@ const KeyCap: React.FC<{ keyName: string }> = ({ keyName }) => {
     down: () => <LuArrowDown />,
     left: () => <LuArrowLeft />,
     right: () => <LuArrowRight />,
-    shift: () => <>{keyName}<LuArrowBigUp /></>,
-  }) ?? keyName;
+    // Recorded keys use these names
+    arrowup: () => <LuArrowUp />,
+    arrowdown: () => <LuArrowDown />,
+    arrowleft: () => <LuArrowLeft />,
+    arrowright: () => <LuArrowRight />,
+    shift: () => <>{capitalize(keyName)}<LuArrowBigUp /></>,
+  }) ?? capitalize(keyName);
 
   return <SingleKeyContainer>{content}</SingleKeyContainer>;
 };
@@ -46,7 +54,6 @@ const Group: React.FC<{
     width: "460px",
     maxWidth: "50vw",
 
-    // Same color as the group cards in Studio/Tobira (`neutral10`). The modal itself is `neutral05`.
     background: `${theme.background}`,
     borderRadius: "5px",
     boxShadow: `${theme.boxShadow_tiles}`,
@@ -387,7 +394,9 @@ const ChangeHotkeyContent: React.FC<{
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
+    gap: "24px",
     width: "100%",
+    "& > p": { margin: 0 },
   });
 
   const buttonsStyle = css({
@@ -413,10 +422,15 @@ const ChangeHotkeyContent: React.FC<{
     <div css={modalContentStyle}>
       <p>{t("keyboardControls.changeModal.info")}</p>
       <p>{t("keyboardControls.changeModal.recordedKeys")}</p>
-      <p css={css({ minHeight: "19px" })}>{Array.from(keys).join(" + ")}</p>
+      <div css={{ minHeight: 36 }}>
+        {keys.size > 0 && (
+          <KeyCombinationContainer>
+            {Array.from(keys).map(key => <KeyCap key={key} keyName={key} />)}
+          </KeyCombinationContainer>
+        )}
+      </div>
       {keyIsAlreadyPresent ? <p>{t("keyboardControls.alreadyInUse")}</p> : null}
       {containsPlus ? <p>{t("keyboardControls.containsPlus")}</p> : null}
-      <br />
       <div css={buttonsStyle}>
         <ProtoButton
           onClick={modalRef.current?.close}
