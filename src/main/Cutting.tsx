@@ -1,4 +1,6 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
+import { useResizeObserver } from "usehooks-ts";
+import { clamp } from "lodash";
 import CuttingActions from "./CuttingActions";
 import Timeline from "./Timeline";
 import {
@@ -36,6 +38,17 @@ import VideoPlayers from "./VideoPlayers";
 import VideoControls from "./VideoControls";
 import { fetchMetadata, selectGetStatus as selectMetadataGetStatus } from "../redux/metadataSlice";
 import { readableErrorMessage } from "../util/utilityFunctions";
+
+// Heights in px
+const MAX_VIDEO_HEIGHT = 500;
+/** The smallest the videos get. If there is less space, the view scrolls */
+const MIN_VIDEO_HEIGHT = 150;
+/** The video height to keep while there is space. Only below this does the timeline shrink */
+const COMFORTABLE_VIDEO_HEIGHT = 250;
+const MAX_TIMELINE_HEIGHT = 260;
+const MIN_TIMELINE_HEIGHT = 140;
+/** Everything that is neither video nor timeline: title, buttons, controls, paddings and gaps */
+const OTHER_HEIGHT = 300;
 
 const Cutting: React.FC = () => {
 
@@ -90,23 +103,48 @@ const Cutting: React.FC = () => {
     }
   }, [metadataGetStatus, dispatch]);
 
+  // Make the timeline and the videos fit into the available height, if possible.
+  // The videos take up whatever space the timeline leaves free, so the timeline shrinks first
+  // once the videos are down to a reasonable size.
+  const cuttingRef = useRef<HTMLDivElement>(null);
+  const { height: availableHeight } = useResizeObserver({ ref: cuttingRef as React.RefObject<HTMLDivElement> });
+  const timelineHeight = availableHeight === undefined
+    ? MAX_TIMELINE_HEIGHT
+    : clamp(availableHeight - OTHER_HEIGHT - COMFORTABLE_VIDEO_HEIGHT, MIN_TIMELINE_HEIGHT, MAX_TIMELINE_HEIGHT);
+
   // Style
   const cuttingStyle = css({
     display: "flex",
     width: "auto",
+    // Fill the main content area. If that is too small to fit everything at the minimum sizes,
+    // the content scrolls instead of squeezing further.
+    height: "100%",
+    minHeight: `${OTHER_HEIGHT + MIN_TIMELINE_HEIGHT + MIN_VIDEO_HEIGHT}px`,
     flexDirection: "column",
-    justifyContent: "center",
     alignItems: "center",
   });
 
+  // The video area is as tall as the videos are by default (determined by their width).
+  // It only shrinks, and the videos with it, if the timeline needs the space (see minHeight of cuttingStyle).
+  const videoAreaStyle = css({
+    flex: "0 1 auto",
+    // No minimum height here: it would make the area taller than the videos need at narrow widths
+    minHeight: 0,
+    maxHeight: `${MAX_VIDEO_HEIGHT}px`,
+    width: "100%",
+    // Let the video players fill the area
+    "& > div": { height: "100%" },
+  });
 
   return (
-    <div css={cuttingStyle}>
+    <div css={cuttingStyle} ref={cuttingRef}>
       <CuttingHeader />
-      <VideoPlayers maxHeightInPixel={500} />
+      <div css={videoAreaStyle}>
+        <VideoPlayers maxHeightInPixel={MAX_VIDEO_HEIGHT} />
+      </div>
       <div css={videosStyle(theme)}>
         <Timeline
-          timelineHeight={260}
+          timelineHeight={timelineHeight}
           selectIsPlaying={selectIsPlaying}
           selectCurrentlyAt={selectCurrentlyAt}
           setIsPlaying={setIsPlaying}
