@@ -46,39 +46,39 @@ const Group: React.FC<{
 }> = ({ id, entries, openEditModal, openDeleteModal }) => {
 
   const { t } = useTranslation();
-  const theme = useTheme();
 
   const groupStyle = css({
     display: "flex",
     flexDirection: "column",
-    width: "460px",
-    maxWidth: "50vw",
-
-    background: `${theme.background}`,
-    borderRadius: "5px",
-    boxShadow: `${theme.boxShadow_tiles}`,
-    boxSizing: "border-box",
-    padding: "0px 20px 20px 20px",
+    gap: "8px",
   });
 
   const headingStyle = css({
-    color: `${theme.text}`,
+    fontSize: "18px",
+  });
+
+  const entriesStyle = css({
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 380px), 1fr))",
+    gap: "12px",
   });
 
   return (
-    <div css={groupStyle}>
+    <section css={groupStyle}>
       <h3 css={headingStyle}>{t(getGroupName(id))}</h3>
-      {Object.entries(entries).map(([entryId, value]) =>
-        <Entry
-          key={entryId}
-          id={entryId}
-          entry={value}
-          groupId={id}
-          openEditModal={openEditModal}
-          openDeleteModal={openDeleteModal}
-        />,
-      )}
-    </div>
+      <div css={entriesStyle}>
+        {Object.entries(entries).map(([entryId, value]) =>
+          <Entry
+            key={entryId}
+            id={entryId}
+            entry={value}
+            groupId={id}
+            openEditModal={openEditModal}
+            openDeleteModal={openDeleteModal}
+          />,
+        )}
+      </div>
+    </section>
   );
 };
 
@@ -110,17 +110,14 @@ const Entry: React.FC<{
     display: "flex",
     flexFlow: "column nowrap",
     justifyContent: "left",
-    width: "100%",
-    padding: "10px 0px",
-    gap: "10px",
+    padding: "10px 16px",
+    gap: "8px",
+    background: `${theme.background}`,
+    borderRadius: "4px",
   });
 
   const labelStyle = css({
-    fontWeight: "bold",
-    overflow: "hidden",
-    textOverflow: "ellipsis",
-    wordWrap: "break-word",
-    color: `${theme.text}`,
+    overflowWrap: "anywhere",
   });
 
   const entryContentStyle = css({
@@ -144,8 +141,10 @@ const Entry: React.FC<{
 
   const orStyle = css({
     alignSelf: "center",
-    fontSize: "20px",
-    fontWeight: "bold",
+  });
+
+  const editButtonsStyle = css({
+    display: "flex",
   });
 
   const editButtonStyle = css({
@@ -172,7 +171,7 @@ const Entry: React.FC<{
             ))}
           </div>
         }
-        <div>
+        <div css={editButtonsStyle}>
           <ProtoButton
             css={[basicButtonStyle(theme), editButtonStyle]}
             onClick={() => openEditModal(groupId, id, t(entry.name as ParseKeys))}
@@ -265,10 +264,8 @@ const KeyboardControls: React.FC = () => {
 
   const groupsStyle = css({
     display: "flex",
-    flexDirection: "row",
-    flexWrap: "wrap",
-    justifyContent: "center",
-    gap: "30px",
+    flexDirection: "column",
+    gap: "32px",
   });
 
   const render = () => {
