@@ -6,6 +6,7 @@ import { useTheme } from "../themes";
 import { css } from "@emotion/react";
 import { useTranslation } from "react-i18next";
 import { MainMenuButton } from "./MainMenu";
+import KeyboardControlsModal from "./KeyboardControls";
 import { LuMoon, LuSun } from "react-icons/lu";
 import { HiOutlineTranslate } from "react-icons/hi";
 import { LuKeyboard } from "react-icons/lu";
@@ -16,8 +17,8 @@ import { selectIsEnd } from "../redux/endSlice";
 import {
   checkboxMenuItem,
   HeaderMenuItemDef,
+  ModalHandle,
   ProtoButton,
-  screenWidthAtMost,
   useColorScheme,
   WithHeaderMenu,
 } from "@opencast/appkit";
@@ -28,7 +29,6 @@ import { languages as lngs } from "../i18n/lngs-generated";
 function Header() {
   const theme = useTheme();
   const { scheme } = useColorScheme();
-  const { t } = useTranslation();
 
   const isEnd = useAppSelector(selectIsEnd);
 
@@ -57,46 +57,13 @@ function Header() {
     gap: "16px",
   });
 
-  const settingsButtonCSS = css({
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "center",
-    gap: "8px",
-
-    fontSize: 16,
-    fontFamily: "inherit",
-    fontWeight: 500,
-    color: `${theme.header_text}`,
-    outline: `${theme.menuButton_outline}`,
-    padding: "6px 8px",
-
-    ":hover, :active": {
-      outline: `2px solid ${theme.metadata_highlight}`,
-      backgroundColor: theme.header_button_hover_bg,
-      color: `${theme.header_text}`,
-    },
-
-    [screenWidthAtMost(BREAKPOINTS.medium)]: {
-      fontSize: 0,
-    },
-  });
-
   return (
     <div css={[headerStyle, headerStyleThemed]}>
       <Logo />
       <div css={rightSideButtonsStyle}>
         <LanguageButton />
         <ThemeButton />
-        {!isEnd &&
-          <MainMenuButton
-            Icon={LuKeyboard}
-            stateName={MainMenuStateNames.keyboardControls}
-            bottomText={t("keyboardControls.header")}
-            ariaLabelText={t("keyboardControls.header")}
-            customCSS={settingsButtonCSS}
-            iconCustomCSS={css({ fontSize: 22 })}
-          />
-        }
+        {!isEnd && <HotkeysButton />}
       </div>
     </div>
   );
@@ -153,6 +120,22 @@ const Logo: React.FC = () => {
       customCSS={logo}
       iconCustomCSS={css({ width: "auto", height: "60px" })}
     />
+  );
+};
+
+const HotkeysButton: React.FC = () => {
+  const { t } = useTranslation();
+  const modalRef = React.useRef<ModalHandle>(null);
+
+  return (
+    <>
+      <HeaderButton
+        Icon={LuKeyboard}
+        label={t("keyboardControls.header")}
+        onClick={() => modalRef.current?.open()}
+      />
+      <KeyboardControlsModal modalRef={modalRef} />
+    </>
   );
 };
 
