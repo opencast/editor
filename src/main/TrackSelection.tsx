@@ -23,6 +23,7 @@ import {
   titleStyleBold,
 } from "../cssStyles";
 
+import { screenWidthAbove } from "@opencast/appkit";
 import { useTranslation } from "react-i18next";
 import { useTheme } from "../themes";
 import { outOfBounds } from "../util/utilityFunctions";
@@ -257,7 +258,7 @@ const VideoTrackItem: React.FC<{
     width: "100%",
     opacity: track.video_stream.enabled ? "1" : "0.5",
     maxWidth: `${imagesMaxWidthMedium}px`,
-    [`@media (min-width: ${BREAKPOINTS.medium}px)`]: {
+    [screenWidthAbove(BREAKPOINTS.medium)]: {
       "&": { maxWidth: `${imagesMaxWidth}px` },
     },
   });
@@ -319,7 +320,7 @@ const AudioTrackItem: React.FC<{
     filter: `${theme.invert_wave}`,
     color: `${theme.inverted_text}`,
     maxWidth: `${imagesMaxWidthMedium}px`,
-    [`@media (min-width: ${BREAKPOINTS.medium}px)`]: {
+    [screenWidthAbove(BREAKPOINTS.medium)]: {
       "&": { maxWidth: `${imagesMaxWidth}px` },
     },
   });
