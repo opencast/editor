@@ -3,7 +3,6 @@
  */
 import { css, Global } from "@emotion/react";
 import React from "react";
-import emotionNormalize from "emotion-normalize";
 import { createTheme } from "@mui/material/styles";
 import { Theme, useTheme } from "./themes";
 import {
@@ -24,19 +23,40 @@ export const GlobalStyle: React.FC = () => {
 
 /**
  * CSS for the global style component
+ *
+ * Includes a minimal CSS reset to get rid of inconsistent or surprising browser defaults.
+ * Adapted from the one used by Tobira and Opencast Studio, which is in turn based on
+ * https://github.com/hankchizljaw/modern-css-reset (MIT, Andy Bell and other contributors)
  */
 export const globalStyle = (theme: Theme) => css({
-  emotionNormalize,
+  // Everything should have box-sizing border-box by default as it's more intuitive and expected.
+  "*, *::before, *::after": {
+    boxSizing: "border-box",
+  },
+  // Remove default margins of the most important elements.
+  "body, h1, h2, h3, h4, p, li, figure, figcaption, blockquote, dl, dd, pre": {
+    margin: 0,
+  },
+  // This improves the readability of underlines in links.
+  a: {
+    textDecorationSkipInk: "auto",
+  },
   body: {
     backgroundColor: `${theme.background}`,
     color: `${theme.text}`,
     fontSize: "medium",
-    // Makes the body span to the bottom of the page
-    minHeight: "100vh",
+    // A reset to a sensible value.
+    lineHeight: 1.5,
+    // This only affects scrolling that "is triggered by the navigation or CSSOM scrolling APIs".
+    // For anchors, smooth scrolling is useful.
+    scrollBehavior: "smooth",
+    // Prevents an increase in font size when changing from portrait to landscape orientation in iOS Safari.
+    WebkitTextSizeAdjust: "none",
   },
   // Some elements not inheriting fonts is a really confusing browser default.
   "input, button, textarea, select": {
     font: "inherit",
+    margin: 0,
   },
 });
 
@@ -413,7 +433,6 @@ export const videosStyle = (theme: Theme) => css(({
   borderRadius: "5px",
   boxShadow: `${theme.boxShadow_tiles}`,
   marginTop: "24px",
-  boxSizing: "border-box",
   padding: "10px",
   gap: "10px",
 }));
@@ -422,7 +441,6 @@ export const backgroundBoxStyle = (theme: Theme) => css(({
   background: `${theme.menu_background}`,
   borderRadius: "7px",
   boxShadow: `${theme.boxShadow_tiles}`,
-  boxSizing: "border-box",
   padding: "20px",
   gap: "25px",
 }));
