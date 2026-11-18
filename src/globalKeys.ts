@@ -52,14 +52,22 @@ export interface IKey {
   splitKey?: string;
 }
 
+/**
+ * Scope of all hotkeys of the editor itself. Can be disabled (see `useDisableHotkeys`)
+ * to prevent them from triggering while e.g. a modal is open.
+ */
+export const HOTKEY_SCOPE = "editor";
+
 const hotkeysDefaultOptions: object = {
   preventDefault: true,
   enableOnFormTags: ["slider"],
+  scopes: HOTKEY_SCOPE,
 };
 
 export const subtitleListHotkeysDefaultOptions: object = {
   preventDefault: true,
   enableOnFormTags: ["input", "select", "textarea", "slider"],
+  scopes: HOTKEY_SCOPE,
 };
 
 const cuttingZoomInSplitKey = ";";
@@ -150,6 +158,7 @@ export const DEFAULT_KEYMAP: IKeyMap = {
       key: "Shift+Alt+j , Left",
       options: {
         preventDefault: true,
+        scopes: HOTKEY_SCOPE,
       },
     },
     right: {
@@ -157,6 +166,7 @@ export const DEFAULT_KEYMAP: IKeyMap = {
       key: "Shift+Alt+l, Right",
       options: {
         preventDefault: true,
+        scopes: HOTKEY_SCOPE,
       },
     },
     increase: {
@@ -164,6 +174,7 @@ export const DEFAULT_KEYMAP: IKeyMap = {
       key: "Shift+Alt+i, Up",
       options: {
         preventDefault: true,
+        scopes: HOTKEY_SCOPE,
       },
     },
     decrease: {
@@ -171,6 +182,7 @@ export const DEFAULT_KEYMAP: IKeyMap = {
       key: "Shift+Alt+k, Down",
       options: {
         preventDefault: true,
+        scopes: HOTKEY_SCOPE,
       },
     },
   },
@@ -178,32 +190,32 @@ export const DEFAULT_KEYMAP: IKeyMap = {
     addAbove: {
       name: "subtitleList.addSegmentAbove",
       key: "Shift+Alt+q",
-      options: {},
+      options: { scopes: HOTKEY_SCOPE },
     },
     addBelow: {
       name: "subtitleList.addSegmentBelow",
       key: "Shift+Alt+a",
-      options: {},
+      options: { scopes: HOTKEY_SCOPE },
     },
     jumpAbove: {
       name: "subtitleList.jumpToSegmentAbove",
       key: "Shift+Alt+w",
-      options: {},
+      options: { scopes: HOTKEY_SCOPE },
     },
     jumpBelow: {
       name: "subtitleList.jumpToSegmentBelow",
       key: "Shift+Alt+s",
-      options: {},
+      options: { scopes: HOTKEY_SCOPE },
     },
     delete: {
       name: "subtitleList.deleteSegment",
       key: "Shift+Alt+d",
-      options: {},
+      options: { scopes: HOTKEY_SCOPE },
     },
     addCue: {
       name: "subtitleList.addCue",
       key: "Shift+Alt+e",
-      options: {},
+      options: { scopes: HOTKEY_SCOPE },
     },
   },
 };

@@ -1,15 +1,42 @@
-import React, { JSX } from "react";
+import React, { JSX, useEffect } from "react";
 import { css } from "@emotion/react";
 import { ParseKeys } from "i18next";
 import { useTranslation, Trans } from "react-i18next";
-import { getGroupName, IKey, IKeyGroup, IKeyMap, rewriteKeys } from "../globalKeys";
+import { getGroupName, HOTKEY_SCOPE, IKey, IKeyGroup, IKeyMap, rewriteKeys } from "../globalKeys";
 import { Theme, useTheme } from "../themes";
-import { basicButtonStyle, deactivatedButtonStyle, titleStyle, titleStyleBold } from "../cssStyles";
-import { useRecordHotkeys } from "react-hotkeys-hook";
+import { basicButtonStyle, deactivatedButtonStyle } from "../cssStyles";
+import { useHotkeysContext, useRecordHotkeys } from "react-hotkeys-hook";
 import { useAppDispatch, useAppSelector } from "../redux/store";
 import { resetHotkey, selectKeymap, setHotkey } from "../redux/hotkeySlice";
-import { Modal, ModalHandle, ProtoButton } from "@opencast/appkit";
-import { LuPen, LuRotateCcw, LuTrash } from "react-icons/lu";
+import {
+  KeyCombinationContainer, match, Modal, ModalHandle, ProtoButton, SingleKeyContainer,
+} from "@opencast/appkit";
+import {
+  LuArrowBigUp, LuArrowDown, LuArrowLeft, LuArrowRight, LuArrowUp, LuPen, LuRotateCcw, LuTrash,
+} from "react-icons/lu";
+
+// Recorded special keys are lowercase ("space", "escape"). Single characters are left as they are.
+const capitalize = (name: string) => name.length > 1 ? name[0].toUpperCase() + name.slice(1) : name;
+
+/**
+ * Displays a single key. Arrows and Shift are shown with icons, everything else as text.
+ */
+const KeyCap: React.FC<{ keyName: string }> = ({ keyName }) => {
+  const content = match(keyName.toLowerCase(), {
+    up: () => <LuArrowUp />,
+    down: () => <LuArrowDown />,
+    left: () => <LuArrowLeft />,
+    right: () => <LuArrowRight />,
+    // Recorded keys use these names
+    arrowup: () => <LuArrowUp />,
+    arrowdown: () => <LuArrowDown />,
+    arrowleft: () => <LuArrowLeft />,
+    arrowright: () => <LuArrowRight />,
+    shift: () => <>{capitalize(keyName)}<LuArrowBigUp /></>,
+  }) ?? capitalize(keyName);
+
+  return <SingleKeyContainer>{content}</SingleKeyContainer>;
+};
 
 const Group: React.FC<{
   id: string
@@ -19,39 +46,39 @@ const Group: React.FC<{
 }> = ({ id, entries, openEditModal, openDeleteModal }) => {
 
   const { t } = useTranslation();
-  const theme = useTheme();
 
   const groupStyle = css({
     display: "flex",
     flexDirection: "column",
-    width: "460px",
-    maxWidth: "50vw",
-
-    background: `${theme.menu_background}`,
-    borderRadius: "5px",
-    boxShadow: `${theme.boxShadow_tiles}`,
-    boxSizing: "border-box",
-    padding: "0px 20px 20px 20px",
+    gap: "8px",
   });
 
   const headingStyle = css({
-    color: `${theme.text}`,
+    fontSize: "18px",
+  });
+
+  const entriesStyle = css({
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 380px), 1fr))",
+    gap: "12px",
   });
 
   return (
-    <div css={groupStyle}>
+    <section css={groupStyle}>
       <h3 css={headingStyle}>{t(getGroupName(id))}</h3>
-      {Object.entries(entries).map(([entryId, value]) =>
-        <Entry
-          key={entryId}
-          id={entryId}
-          entry={value}
-          groupId={id}
-          openEditModal={openEditModal}
-          openDeleteModal={openDeleteModal}
-        />,
-      )}
-    </div>
+      <div css={entriesStyle}>
+        {Object.entries(entries).map(([entryId, value]) =>
+          <Entry
+            key={entryId}
+            id={entryId}
+            entry={value}
+            groupId={id}
+            openEditModal={openEditModal}
+            openDeleteModal={openDeleteModal}
+          />,
+        )}
+      </div>
+    </section>
   );
 };
 
@@ -83,17 +110,14 @@ const Entry: React.FC<{
     display: "flex",
     flexFlow: "column nowrap",
     justifyContent: "left",
-    width: "100%",
-    padding: "10px 0px",
-    gap: "10px",
+    padding: "10px 16px",
+    gap: "8px",
+    background: `${theme.background}`,
+    borderRadius: "4px",
   });
 
   const labelStyle = css({
-    fontWeight: "bold",
-    overflow: "hidden",
-    textOverflow: "ellipsis",
-    wordWrap: "break-word",
-    color: `${theme.text}`,
+    overflowWrap: "anywhere",
   });
 
   const entryContentStyle = css({
@@ -115,21 +139,12 @@ const Entry: React.FC<{
     gap: "10px",
   });
 
-  const singleKeyStyle = css({
-    borderRadius: "4px",
-    borderWidth: "2px",
-    borderStyle: "solid",
-    borderColor: `${theme.singleKey_border}`,
-    background: `${theme.singleKey_bg}`,
-    boxShadow: `${theme.singleKey_boxShadow}`,
-    padding: "10px",
-    color: `${theme.text}`,
-  });
-
   const orStyle = css({
     alignSelf: "center",
-    fontSize: "20px",
-    fontWeight: "bold",
+  });
+
+  const editButtonsStyle = css({
+    display: "flex",
   });
 
   const editButtonStyle = css({
@@ -146,16 +161,9 @@ const Entry: React.FC<{
           <div css={sequencesStyle}>
             {formatEntry(entry).map((sequence, index, arr) => (
               <div css={sequenceStyle} key={index}>
-                {sequence.map((singleKey, index) => (
-                  <div key={index} css={sequenceStyle}>
-                    <div css={singleKeyStyle}>
-                      {singleKey}
-                    </div>
-                    {sequence.length - 1 !== index &&
-                      <div css={orStyle}>+</div>
-                    }
-                  </div>
-                ))}
+                <KeyCombinationContainer>
+                  {sequence.map((singleKey, index) => <KeyCap key={index} keyName={singleKey} />)}
+                </KeyCombinationContainer>
                 <div css={orStyle}><Trans>
                   {arr.length - 1 !== index && t("keyboardControls.sequenceSeparator")}
                 </Trans></div>
@@ -163,7 +171,7 @@ const Entry: React.FC<{
             ))}
           </div>
         }
-        <div>
+        <div css={editButtonsStyle}>
           <ProtoButton
             css={[basicButtonStyle(theme), editButtonStyle]}
             onClick={() => openEditModal(groupId, id, t(entry.name as ParseKeys))}
@@ -189,12 +197,45 @@ const Entry: React.FC<{
 };
 
 
+/**
+ * Displays the hotkeys in a modal, which is opened through the given ref.
+ */
+const KeyboardControlsModal: React.FC<{
+  modalRef: React.RefObject<ModalHandle | null>,
+}> = ({ modalRef }) => {
+  const { t } = useTranslation();
+
+  return (
+    <Modal
+      ref={modalRef}
+      title={t("keyboardControls.header")}
+      text={{ close: t("modal.close") }}
+      closeOnOutsideClick
+      css={{
+        width: "80%",
+        maxWidth: 1000,
+        "& > div": {
+          maxHeight: "80vh",
+          overflow: "auto",
+        },
+      }}
+    >
+      <KeyboardControls />
+    </Modal>
+  );
+};
+
 const KeyboardControls: React.FC = () => {
   const { t } = useTranslation();
-  const theme = useTheme();
   const keymap = useAppSelector(selectKeymap);
 
-  const [keys, { start, stop, resetKeys }] = useRecordHotkeys();
+  // This component only exists while the modal is open. Meanwhile, the editor's own hotkeys should not trigger.
+  const { enableScope, disableScope } = useHotkeysContext();
+  useEffect(() => {
+    disableScope(HOTKEY_SCOPE);
+    return () => enableScope(HOTKEY_SCOPE);
+  }, [enableScope, disableScope]);
+
   const modalRef = React.useRef<ModalHandle>(null);
   const modalRefDelete = React.useRef<ModalHandle>(null);
   const [editGroup, setEditGroup] = React.useState<string>("");
@@ -205,9 +246,6 @@ const KeyboardControls: React.FC = () => {
     setEditGroup(group);
     setEditAction(action);
     setEditActionTitle(actionTitle);
-
-    resetKeys();
-    start();
 
     if (modalRef.current) {
       modalRef.current?.open();
@@ -226,10 +264,8 @@ const KeyboardControls: React.FC = () => {
 
   const groupsStyle = css({
     display: "flex",
-    flexDirection: "row",
-    flexWrap: "wrap",
-    justifyContent: "center",
-    gap: "30px",
+    flexDirection: "column",
+    gap: "32px",
   });
 
   const render = () => {
@@ -257,23 +293,10 @@ const KeyboardControls: React.FC = () => {
     return <div>{t("keyboardControls.genericError")}</div>;
   };
 
-  const keyboardControlsStyle = css({
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    width: "100%",
-  });
-
   return (
-    <div css={keyboardControlsStyle}>
-      <div css={[titleStyle(theme), titleStyleBold(theme)]}>
-        {t("keyboardControls.header")}
-      </div>
-
+    <div>
       <ChangeHotkeyModal
         modalRef={modalRef}
-        keys={keys}
-        stop={stop}
         group={editGroup}
         action={editAction}
         actionTitle={editActionTitle}
@@ -293,18 +316,41 @@ const KeyboardControls: React.FC = () => {
 
 const ChangeHotkeyModal: React.FC<{
   modalRef: React.RefObject<ModalHandle | null>,
-  keys: Set<string>,
-  stop: () => void
   group: string,
   action: string,
   actionTitle: string,
 }> = ({
   modalRef,
-  keys,
-  stop,
   group,
   action,
   actionTitle,
+}) => {
+  const { t } = useTranslation();
+
+  return (
+    <Modal
+      ref={modalRef}
+      title={t("keyboardControls.changeModal.title", { name: actionTitle, interpolation: { escapeValue: false } })}
+      text={{ close: t("modal.close") }}
+    >
+      <ChangeHotkeyContent modalRef={modalRef} group={group} action={action} />
+    </Modal>
+  );
+};
+
+/**
+ * The content of the modal is only mounted while the modal is open.
+ * This is what limits the recording of keys to the time the modal is open:
+ * The recording grabs all key presses, so it has to end however the modal is closed.
+ */
+const ChangeHotkeyContent: React.FC<{
+  modalRef: React.RefObject<ModalHandle | null>,
+  group: string,
+  action: string,
+}> = ({
+  modalRef,
+  group,
+  action,
 }) => {
   const dispatch = useAppDispatch();
   const { t } = useTranslation();
@@ -312,10 +358,20 @@ const ChangeHotkeyModal: React.FC<{
 
   const keymap = useAppSelector(selectKeymap);
 
+  const [keys, { start, stop, resetKeys }] = useRecordHotkeys();
+
+  useEffect(() => {
+    resetKeys();
+    start();
+  }, [resetKeys, start]);
+
   // Hard limit maximum amount of keys
-  if (keys.size >= 3) {
-    stop();
-  }
+  useEffect(() => {
+    if (keys.size >= 3) {
+      stop();
+    }
+  }, [keys, stop]);
+
 
   const setNewKeys = () => {
     stop();
@@ -335,7 +391,9 @@ const ChangeHotkeyModal: React.FC<{
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
+    gap: "24px",
     width: "100%",
+    "& > p": { margin: 0 },
   });
 
   const buttonsStyle = css({
@@ -350,6 +408,7 @@ const ChangeHotkeyModal: React.FC<{
     padding: "12px 16px",
     justifyContent: "space-around",
     boxShadow: `${theme.boxShadow}`,
+    border: `${theme.menuBorder}`,
     background: `${theme.element_bg}`,
   });
 
@@ -358,37 +417,36 @@ const ChangeHotkeyModal: React.FC<{
   const disabled = keys.size === 0 || keyIsAlreadyPresent || containsPlus;
 
   return (
-    <Modal
-      ref={modalRef}
-      title={t("keyboardControls.changeModal.title", { name: actionTitle, interpolation: { escapeValue: false } })}
-      text={{ close: t("modal.close") }}
-    >
-      <div css={modalContentStyle}>
-        <p>{t("keyboardControls.changeModal.info")}</p>
-        <p>{t("keyboardControls.changeModal.recordedKeys")}</p>
-        <p css={css({ minHeight: "19px" })}>{Array.from(keys).join(" + ")}</p>
-        {keyIsAlreadyPresent ? <p>{t("keyboardControls.alreadyInUse")}</p> : null}
-        {containsPlus ? <p>{t("keyboardControls.containsPlus")}</p> : null}
-        <br />
-        <div css={buttonsStyle}>
-          <ProtoButton
-            onClick={modalRef.current?.close}
-            css={[basicButtonStyle(theme), buttonStyle(theme)]}
-          >
-            {t("keyboardControls.changeModal.discard")}
-          </ProtoButton>
-          <ProtoButton
-            onClick={setNewKeys}
-            css={!disabled
-              ? [basicButtonStyle(theme), buttonStyle(theme)]
-              : [deactivatedButtonStyle, buttonStyle(theme)]}
-            disabled={disabled}
-          >
-            {t("keyboardControls.changeModal.save")}
-          </ProtoButton>
-        </div>
+    <div css={modalContentStyle}>
+      <p>{t("keyboardControls.changeModal.info")}</p>
+      <p>{t("keyboardControls.changeModal.recordedKeys")}</p>
+      <div css={{ minHeight: 36 }}>
+        {keys.size > 0 && (
+          <KeyCombinationContainer>
+            {Array.from(keys).map(key => <KeyCap key={key} keyName={key} />)}
+          </KeyCombinationContainer>
+        )}
       </div>
-    </Modal>
+      {keyIsAlreadyPresent ? <p>{t("keyboardControls.alreadyInUse")}</p> : null}
+      {containsPlus ? <p>{t("keyboardControls.containsPlus")}</p> : null}
+      <div css={buttonsStyle}>
+        <ProtoButton
+          onClick={modalRef.current?.close}
+          css={[basicButtonStyle(theme), buttonStyle(theme)]}
+        >
+          {t("keyboardControls.changeModal.discard")}
+        </ProtoButton>
+        <ProtoButton
+          onClick={setNewKeys}
+          css={!disabled
+            ? [basicButtonStyle(theme), buttonStyle(theme)]
+            : [deactivatedButtonStyle, buttonStyle(theme)]}
+          disabled={disabled}
+        >
+          {t("keyboardControls.changeModal.save")}
+        </ProtoButton>
+      </div>
+    </div>
   );
 };
 
@@ -438,6 +496,7 @@ const DeleteHotkeyModal: React.FC<{
     padding: "12px 16px",
     justifyContent: "space-around",
     boxShadow: `${theme.boxShadow}`,
+    border: `${theme.menuBorder}`,
     background: `${theme.element_bg}`,
   });
 
@@ -509,4 +568,4 @@ function isKeyInKeymap(
 }
 
 
-export default KeyboardControls;
+export default KeyboardControlsModal;
