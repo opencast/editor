@@ -8,7 +8,9 @@
       "thumbnail-button": "Thumbnail",
       "metadata-button": "Metadata",
       "keyboard-controls-button": "Keyboard Controls",
-      "tooltip-aria": "Main Navigation"
+      "tooltip-aria": "Main Navigation",
+      "collapse-tooltip": "Collapse navigation",
+      "expand-tooltip": "Expand navigation"
     },
 
     "cuttingActions": {
