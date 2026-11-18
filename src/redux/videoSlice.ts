@@ -1,4 +1,4 @@
-import { clamp } from "lodash";
+import { clamp } from "lodash-es";
 import { createSlice, nanoid, PayloadAction } from "@reduxjs/toolkit";
 import { client } from "../util/client";
 
