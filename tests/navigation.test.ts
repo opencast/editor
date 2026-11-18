@@ -10,8 +10,8 @@ test('Test: Navigation', async ({ page, baseURL }) => {
   const length = await page.locator('#root > div > div > nav > button').count();
   expect(length >= 2).toBeTruthy();
 
-  // Navigation to Finish
-  await page.click('button[role="menuitem"]:has-text("Finish")');
+  // Navigation to Tracks
+  await page.click('button[role="menuitem"]:has-text("Tracks")');
 
   // Navigation to Cutting
   await page.click('button[role="menuitem"]:has-text("Cutting")');

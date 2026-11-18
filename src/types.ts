@@ -90,7 +90,6 @@ export enum MainMenuStateNames {
   subtitles = "mainMenu.subtitles-button",
   chapters = "mainMenu.chapters-button",
   thumbnail = "mainMenu.thumbnail-button",
-  finish = "mainMenu.finish-button",
   keyboardControls = "mainMenu.keyboard-controls-button",
 }
 

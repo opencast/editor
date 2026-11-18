@@ -1,6 +1,5 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import mainMenuStateReducer from "./mainMenuSlice";
-import finishStateReducer from "./finishSlice";
 import videoReducer from "./videoSlice";
 import workflowPostReducer from "./workflowPostSlice";
 import endReducer from "./endSlice";
@@ -16,7 +15,6 @@ import storage from "redux-persist/es/storage";
 
 const reducers = combineReducers({
   mainMenuState: mainMenuStateReducer,
-  finishState: finishStateReducer,
   videoState: videoReducer,
   workflowPostState: workflowPostReducer,
   endState: endReducer,

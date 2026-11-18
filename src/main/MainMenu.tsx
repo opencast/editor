@@ -4,22 +4,20 @@ import { css, SerializedStyles } from "@emotion/react";
 
 import { IconType } from "react-icons";
 import {
-  LuScissors, LuFilm, LuFileText, LuSquareCheckBig, LuBookOpenText, LuChevronLeft, LuChevronRight,
+  LuScissors, LuFilm, LuFileText, LuBookOpenText, LuChevronLeft, LuChevronRight,
 } from "react-icons/lu";
 import { LuImage } from "react-icons/lu";
 import SubtitleIcon from "../img/subtitle.svg?react";
 
 import { useAppDispatch, useAppSelector } from "../redux/store";
 import { setState, selectMainMenuState, mainMenu } from "../redux/mainMenuSlice";
-import { setPageNumber } from "../redux/finishSlice";
 
 import { MainMenuStateNames } from "../types";
 import { settings } from "../config";
-import { basicButtonStyle, BREAKPOINTS, undisplay } from "../cssStyles";
+import { basicButtonStyle, BREAKPOINTS, TOP_BAR_HEIGHT, undisplay } from "../cssStyles";
 import { setIsPlaying } from "../redux/videoSlice";
 
 import { useTranslation } from "react-i18next";
-import { resetPostRequestState } from "../redux/workflowPostSlice";
 import { setIsDisplayEditView } from "../redux/subtitleSlice";
 import { setIsDisplayEditView as setIsDisplayEditViewThumbnail } from "../redux/thumbnailSlice";
 
@@ -45,20 +43,37 @@ const MainMenu: React.FC = () => {
     flexShrink: 0,
     display: "flex",
     flexDirection: "column",
-    alignItems: "center",
-    padding: "8px",
-    overflowX: "hidden",
-    overflowY: "auto",
     background: `${theme.menu_background}`,
-    gap: "12px",
     // The navigation is always collapsed on small screens
     [screenWidthAtMost(BREAKPOINTS.large)]: {
       width: "64px",
     },
   });
 
+  // Lines up with the action bar
+  const toggleRowStyle = css({
+    boxSizing: "border-box",
+    height: `${TOP_BAR_HEIGHT}px`,
+    flexShrink: 0,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: collapsed ? "center" : "flex-end",
+    padding: "0 8px",
+    background: `${theme.background}`,
+    borderBottom: `${theme.menuBorder}`,
+  });
+
+  const buttonsStyle = css({
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    gap: "12px",
+    padding: "8px",
+    overflowX: "hidden",
+    overflowY: "auto",
+  });
+
   const toggleStyle = css({
-    alignSelf: collapsed ? "center" : "flex-end",
     padding: "4px",
     fontSize: "20px",
     outline: `${theme.menuButton_outline}`,
@@ -71,58 +86,56 @@ const MainMenu: React.FC = () => {
 
   return (
     <nav css={mainMenuStyle} role="navigation" aria-label={t("mainMenu.tooltip-aria")}>
-      <ThemedTooltip title={toggleTooltip}>
-        <ProtoButton
-          aria-label={toggleTooltip}
-          aria-expanded={!collapsed}
-          onClick={() => setCollapsed(!collapsed)}
-          css={[basicButtonStyle(theme), toggleStyle, undisplay(BREAKPOINTS.large)]}
-        >
-          {collapsed ? <LuChevronRight /> : <LuChevronLeft />}
-        </ProtoButton>
-      </ThemedTooltip>
-      <MainMenuButton
-        Icon={LuScissors}
-        stateName={MainMenuStateNames.cutting}
-        bottomText={label(MainMenuStateNames.cutting)}
-        ariaLabelText={t(MainMenuStateNames.cutting)}
-      />
-      {settings.metadata.show && <MainMenuButton
-        Icon={LuFileText}
-        stateName={MainMenuStateNames.metadata}
-        bottomText={label(MainMenuStateNames.metadata)}
-        ariaLabelText={t(MainMenuStateNames.metadata)}
-      />}
-      {settings.trackSelection.show && <MainMenuButton
-        Icon={LuFilm}
-        stateName={MainMenuStateNames.trackSelection}
-        bottomText={label(MainMenuStateNames.trackSelection)}
-        ariaLabelText={t(MainMenuStateNames.trackSelection)}
-      />}
-      {settings.subtitles.show && <MainMenuButton
-        Icon={SubtitleIcon}
-        stateName={MainMenuStateNames.subtitles}
-        bottomText={label(MainMenuStateNames.subtitles)}
-        ariaLabelText={t(MainMenuStateNames.subtitles)}
-      />}
-      {settings.chapters.show && <MainMenuButton
-        Icon={LuBookOpenText}
-        stateName={MainMenuStateNames.chapters}
-        bottomText={label(MainMenuStateNames.chapters)}
-        ariaLabelText={t(MainMenuStateNames.chapters)}
-      />}
-      {settings.thumbnail.show && <MainMenuButton
-        Icon={LuImage}
-        stateName={MainMenuStateNames.thumbnail}
-        bottomText={label(MainMenuStateNames.thumbnail)}
-        ariaLabelText={t(MainMenuStateNames.thumbnail)}
-      />}
-      <MainMenuButton
-        Icon={LuSquareCheckBig}
-        stateName={MainMenuStateNames.finish}
-        bottomText={label(MainMenuStateNames.finish)}
-        ariaLabelText={t(MainMenuStateNames.finish)}
-      />
+      <div css={toggleRowStyle}>
+        <ThemedTooltip title={toggleTooltip}>
+          <ProtoButton
+            aria-label={toggleTooltip}
+            aria-expanded={!collapsed}
+            onClick={() => setCollapsed(!collapsed)}
+            css={[basicButtonStyle(theme), toggleStyle, undisplay(BREAKPOINTS.large)]}
+          >
+            {collapsed ? <LuChevronRight /> : <LuChevronLeft />}
+          </ProtoButton>
+        </ThemedTooltip>
+      </div>
+      <div css={buttonsStyle}>
+        <MainMenuButton
+          Icon={LuScissors}
+          stateName={MainMenuStateNames.cutting}
+          bottomText={label(MainMenuStateNames.cutting)}
+          ariaLabelText={t(MainMenuStateNames.cutting)}
+        />
+        {settings.metadata.show && <MainMenuButton
+          Icon={LuFileText}
+          stateName={MainMenuStateNames.metadata}
+          bottomText={label(MainMenuStateNames.metadata)}
+          ariaLabelText={t(MainMenuStateNames.metadata)}
+        />}
+        {settings.trackSelection.show && <MainMenuButton
+          Icon={LuFilm}
+          stateName={MainMenuStateNames.trackSelection}
+          bottomText={label(MainMenuStateNames.trackSelection)}
+          ariaLabelText={t(MainMenuStateNames.trackSelection)}
+        />}
+        {settings.subtitles.show && <MainMenuButton
+          Icon={SubtitleIcon}
+          stateName={MainMenuStateNames.subtitles}
+          bottomText={label(MainMenuStateNames.subtitles)}
+          ariaLabelText={t(MainMenuStateNames.subtitles)}
+        />}
+        {settings.chapters.show && <MainMenuButton
+          Icon={LuBookOpenText}
+          stateName={MainMenuStateNames.chapters}
+          bottomText={label(MainMenuStateNames.chapters)}
+          ariaLabelText={t(MainMenuStateNames.chapters)}
+        />}
+        {settings.thumbnail.show && <MainMenuButton
+          Icon={LuImage}
+          stateName={MainMenuStateNames.thumbnail}
+          bottomText={label(MainMenuStateNames.thumbnail)}
+          ariaLabelText={t(MainMenuStateNames.thumbnail)}
+        />}
+      </div>
     </nav>
   );
 };
@@ -156,9 +169,6 @@ export const MainMenuButton: React.FC<mainMenuButtonInterface> = ({
   const onMenuItemClicked = () => {
     dispatch(setState(stateName));
     // Reset multi-page content to their first page
-    if (stateName === MainMenuStateNames.finish) {
-      dispatch(setPageNumber(0));
-    }
     if (stateName === MainMenuStateNames.subtitles) {
       dispatch(setIsDisplayEditView(false));
     }
@@ -168,7 +178,6 @@ export const MainMenuButton: React.FC<mainMenuButtonInterface> = ({
     // Halt ongoing events
     dispatch(setIsPlaying(false));
     // Reset states
-    dispatch(resetPostRequestState());
   };
 
   const isActive = activeState === stateName;

@@ -6,6 +6,7 @@ import TheEnd from "./TheEnd";
 import Error from "./Error";
 import Landing from "./Landing";
 import Lock from "./Lock";
+import ActionBar from "./ActionBar";
 
 import { css } from "@emotion/react";
 
@@ -44,11 +45,21 @@ const Body: React.FC = () => {
         <div css={bodyStyle}>
           <Lock />
           <MainMenu />
-          <MainContent />
+          <div css={contentStyle}>
+            <ActionBar />
+            <MainContent />
+          </div>
         </div>
       );
     }
   };
+
+  const contentStyle = css({
+    display: "flex",
+    flexDirection: "column",
+    flex: 1,
+    minWidth: 0,
+  });
 
   const bodyStyle = css({
     display: "flex",

@@ -1,7 +1,6 @@
 {
     "mainMenu": {
       "cutting-button": "Cutting",
-      "finish-button": "Finish",
       "select-tracks-button": "Tracks",
       "subtitles-button": "Subtitles",
       "chapters-button": "Chapters",
@@ -11,6 +10,16 @@
       "tooltip-aria": "Main Navigation",
       "collapse-tooltip": "Collapse navigation",
       "expand-tooltip": "Expand navigation"
+    },
+
+    "actionBar": {
+      "tooltip-aria": "Actions",
+      "save-button": "Save draft",
+      "save-tooltip": "Save your changes without processing the video. You can continue your edit later.",
+      "saved-text": "Changes saved.",
+      "publish-button": "Publish",
+      "publish-tooltip": "Save your changes and start processing the video",
+      "publish-title": "Publish"
     },
 
     "cuttingActions": {
@@ -68,49 +77,14 @@
       "presenter-tooltip": "Video Presenters"
     },
 
-    "finishMenu": {
-      "save-button": "Save changes",
-      "start-button": "Save and process changes",
-      "discard-button": "Discard changes"
-    },
-
-    "save": {
-      "headline-text": "Save current project",
-      "confirm-button": "Yes, save changes",
-      "confirmButton-attempting-tooltip": "Attempting to save",
-      "confirmButton-success-tooltip": "Saved successfully",
-      "confirmButton-failed-tooltip": "Save failed",
-      "info-text": "The video will not be processed but all cutting information will be stored in Opencast. You can continue your edit later.",
-      "success-text": "Changes saved successfully! You can now close the editor or continue working.",
-      "success-tooltip-aria": "Saved successfully",
-      "saveArea-tooltip": "Save Area",
-      "confirm-success": "Okay",
-      "cancel-save": "Don't save"
-    },
-
-    "discard": {
-      "headline-text": "Discard changes",
-      "confirm-button": "Yes, discard changes",
-      "info-text": "Are you sure you want to discard your changes? This cannot be undone!"
-    },
-
     "theEnd": {
-      "discarded-text": "Your changes have been discarded. You can now close the editor.",
-      "startOver-button": "Let me start over!",
-      "startOver-tooltip": "Reload the page to start over",
       "info-text": "Changes successfully saved to Opencast. Processing your changes may take quite some time so please be patient. You can now close the editor.\n"
     },
 
     "workflowSelection": {
-      "saveAndProcess-text": "Save and Process",
-      "selectWF-text": "Select a workflow",
       "noWorkflows-text": "There are no workflows to process your changes with. Please save your changes and contact an administrator.\n",
       "oneWorkflow-text": "The changes will be saved and the video will be cut and processed with the workflow \"{{workflow}}\". <3/> This will take some time.\n",
       "manyWorkflows-text": "Select which workflow Opencast should use for processing.",
-      "startProcessing-button": "Start processing",
-      "back-button": "Take me back",
-      "selectWF-button": "Click to select this workflow",
-      "selectWF-button-aria": "Press to select the workflow: {{stateName}}\n",
       "error-segmentsTooShort": "The remaining cutting segments are too short. Make sure that at least one segment is at least 2 seconds long. If you are trying to remove the video track, use the track selection menu."
     },
 
@@ -120,12 +94,6 @@
       "scrubber-text-aria": "Timeline marker. {{currentTime}}. Active segment: {{segment}}. {{segmentStatus}}. Controls: {{moveLeft}} and {{moveRight}} to move the timeline marker. {{increase}} and {{decrease}} to increase/decrease the move delta.\n",
       "segments-text-aria": "Segment {{index}}. {{segmentStatus}}. Start: {{start}}. End: {{end}}.\n",
       "cut-text-aria": "Cut marker. {{time}}. Between segment {{leftSegment}} and {{rightSegment}}.\n"
-    },
-
-    "workflowConfig": {
-      "headline-text": "Workflow Configuration",
-      "satisfied-text": "Satisfied with your configuration?",
-      "confirm-button": "Yes, start processing"
     },
 
     "metadata": {
@@ -250,7 +218,6 @@
     "various": {
       "error-details-text": "Details: {{errorMessage}}\n",
       "error-text": "An error has occurred. Please wait a bit and try again.",
-      "goBack-button": "No, take me back",
       "callback-button-system": "Back to {{system}}",
       "callback-button-generic": "Back to previous system"
     },

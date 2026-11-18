@@ -93,14 +93,31 @@ export const navigationButtonStyle = (theme: Theme) => css({
   background: `${theme.element_bg}`,
 });
 
+/** Height of the action bar and the top row of the navigation bar next to it, borders included */
+export const TOP_BAR_HEIGHT = 48;
+
 /**
- * CSS for a container that holds back/forward buttons
+ * CSS for the buttons that act on the whole editor, like saving and publishing.
+ * The accent variant is for the main action.
+ * Disabled buttons use `aria-disabled` so that they can still show a tooltip.
  */
-export const backOrContinueStyle = css(({
-  display: "flex",
-  flexDirection: "row",
-  gap: "20px",
-}));
+export const actionButtonStyle = (theme: Theme, accent = false) => css({
+  display: "inline-flex",
+  alignItems: "center",
+  gap: "8px",
+  padding: "6px 14px",
+  borderRadius: "8px",
+  border: `1px solid ${accent ? theme.accent_color : "transparent"}`,
+  backgroundColor: accent ? theme.accent_bg : theme.background,
+  color: accent ? theme.accent_color : theme.text,
+  "&:hover:not([aria-disabled='true'])": {
+    border: accent ? undefined : `${theme.dropdown_border}`,
+  },
+  "&[aria-disabled='true']": {
+    opacity: 0.5,
+    cursor: "default",
+  },
+});
 
 /**
  * CSS for big buttons in a dynamic grid
