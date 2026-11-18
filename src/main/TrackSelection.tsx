@@ -13,6 +13,7 @@ import {
   selectWaveformImages,
   setAudioEnabled,
   setCustomizedTrackSelection,
+  setHasChanges,
   setVideoEnabled,
 } from "../redux/videoSlice";
 import {
@@ -108,6 +109,7 @@ const TrackSelection: React.FC = () => {
     }
 
     dispatch(setCustomizedTrackSelection(!customizedTrackSelection));
+    dispatch(setHasChanges(true));
   };
 
   const isDisabledBecauseMoreThanTwoVideos = () => {

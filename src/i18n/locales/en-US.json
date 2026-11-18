@@ -16,6 +16,7 @@
       "tooltip-aria": "Actions",
       "save-button": "Save draft",
       "save-tooltip": "Save your changes without processing the video. You can continue your edit later.",
+      "save-nothing-tooltip": "There are no unsaved changes",
       "saved-text": "Changes saved.",
       "publish-button": "Publish",
       "publish-tooltip": "Save your changes and start processing the video",

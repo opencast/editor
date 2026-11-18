@@ -42,6 +42,17 @@ const validateSegmentLength = (segments: Segment[]) => {
 };
 
 /**
+ * Whether the user changed anything since the last save
+ */
+export const useHasUnsavedChanges = () => {
+  const videoChanged = useAppSelector(videoSelectHasChanges);
+  const metadataChanged = useAppSelector(metadataSelectHasChanges);
+  const subtitleChanged = useAppSelector(subtitleSelectHasChanges);
+  const chapterChanged = useAppSelector(chapterSelectHasChanges);
+  return videoChanged || metadataChanged || subtitleChanged || chapterChanged;
+};
+
+/**
  * Returns a function that sends the current changes to Opencast.
  * If `startWorkflow` is true, the selected workflow is started and the editor ends.
  */

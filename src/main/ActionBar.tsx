@@ -7,13 +7,9 @@ import { ModalHandle, ProtoButton, Spinner } from "@opencast/appkit";
 
 import { useAppSelector } from "../redux/store";
 import { selectError, selectStatus } from "../redux/workflowPostSlice";
-import { selectHasChanges as videoSelectHasChanges } from "../redux/videoSlice";
-import { selectHasChanges as metadataSelectHasChanges } from "../redux/metadataSlice";
-import { selectHasChanges as selectSubtitleHasChanges } from "../redux/subtitleSlice";
-import { selectHasChanges as selectChapterHasChanges } from "../redux/chapterSlice";
 import { actionButtonStyle, BREAKPOINTS, TOP_BAR_HEIGHT, undisplay } from "../cssStyles";
 import { useTheme } from "../themes";
-import { useSaveChanges } from "../util/useSaveChanges";
+import { useHasUnsavedChanges, useSaveChanges } from "../util/useSaveChanges";
 import { ThemedTooltip } from "./Tooltip";
 import PublishModal from "./PublishModal";
 
@@ -59,11 +55,7 @@ const SaveStatus: React.FC = () => {
 
   const status = useAppSelector(selectStatus);
   const error = useAppSelector(selectError);
-  const videoChanged = useAppSelector(videoSelectHasChanges);
-  const metadataChanged = useAppSelector(metadataSelectHasChanges);
-  const subtitleChanged = useAppSelector(selectSubtitleHasChanges);
-  const chapterChanged = useAppSelector(selectChapterHasChanges);
-  const hasChanges = videoChanged || metadataChanged || subtitleChanged || chapterChanged;
+  const hasChanges = useHasUnsavedChanges();
 
   const statusStyle = css({
     display: "flex",
@@ -107,13 +99,16 @@ const SaveDraftButton: React.FC = () => {
 
   const save = useSaveChanges();
   const isSaving = useAppSelector(selectStatus) === "loading";
+  const hasChanges = useHasUnsavedChanges();
+  const disabled = isSaving || !hasChanges;
+  const tooltip = hasChanges ? t("actionBar.save-tooltip") : t("actionBar.save-nothing-tooltip");
 
   return (
-    <ThemedTooltip title={t("actionBar.save-tooltip")}>
+    <ThemedTooltip title={tooltip}>
       <ProtoButton
-        aria-label={t("actionBar.save-tooltip")}
-        aria-disabled={isSaving}
-        onClick={() => !isSaving && save(false)}
+        aria-label={tooltip}
+        aria-disabled={disabled}
+        onClick={() => !disabled && save(false)}
         css={actionButtonStyle(theme)}
       >
         {isSaving ? <Spinner size={20} /> : <LuSave />}
