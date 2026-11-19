@@ -168,11 +168,17 @@
 
     "thumbnail": {
       "title": "Thumbnail Editor",
+      "selectTrack-label": "Select a track",
+      "current-title": "Current thumbnail for {{track}}",
+      "new-title": "New thumbnail from {{track}} video",
+      "generated-text": "A thumbnail has been successfully generated",
       "noThumbnailAvailable": "No Thumbnail available",
       "previewImageAlt": "Thumbnail for track",
-      "buttonGenerate": "Generate from frame",
+      "buttonGenerate": "Generate from video",
       "buttonGenerate-tooltip": "Generate a new thumbnail from the current timeline marker position",
       "buttonGenerate-tooltip-aria": "Generate a new thumbnail from the current timeline marker position",
+      "buttonGoToGeneration-tooltip": "Go to generation",
+      "buttonGoToGeneration-tooltip-aria": "Go to generation",
       "buttonUpload": "Upload image",
       "buttonUpload-tooltip": "Upload an image",
       "buttonUpload-tooltip-aria": "Upload an image",
@@ -182,19 +188,10 @@
       "buttonDiscard": "Discard",
       "buttonDiscard-tooltip": "Discard the thumbnail for this track",
       "buttonDiscard-tooltip-aria": "Discard the thumbnail for this track",
-      "buttonGenerateAll": "Generate All",
-      "buttonGenerateAll-tooltip": "Generate new thumbnails for all tracks from the current timeline marker position",
-      "buttonGenerateAll-tooltip-aria": "Generate new thumbnails for all tracks from the current timeline marker position",
-      "explanation": "Upload or generate a thumbnail for each track.",
       "primary": "Primary",
       "secondary": "Secondary",
       "backButton": "Back",
       "backButton-tooltip": "Return to thumbnail selection"
-    },
-
-    "thumbnailSimple": {
-      "rowTitle": "Change thumbnail here",
-      "from": "from"
     },
 
     "error": {

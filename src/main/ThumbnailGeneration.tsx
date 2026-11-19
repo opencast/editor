@@ -1,5 +1,5 @@
 import { css } from "@emotion/react";
-import { LuCamera, LuChevronLeft } from "react-icons/lu";
+import { LuChevronLeft } from "react-icons/lu";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { useAppDispatch, useAppSelector } from "../redux/store";
@@ -10,7 +10,7 @@ import {
 } from "../cssStyles";
 import { useTheme } from "../themes";
 import {
-  selectVideos,
+  selectTracks,
   setHasChanges,
   setThumbnail,
   selectCurrentlyAtInSeconds,
@@ -24,7 +24,6 @@ import {
   selectPrimaryThumbnailTrack,
   setThumbnailTime,
 } from "../redux/videoSlice";
-import { Track } from "../types";
 import Timeline from "./Timeline";
 import { ZoomDropdown, ZoomSlider } from "./CuttingActions";
 import {
@@ -49,12 +48,15 @@ import { VideoPlayer, VideoPlayerForwardRef } from "./VideoPlayers";
 import VideoControls from "./VideoControls";
 import { ProtoButton } from "@opencast/appkit";
 import {
-  DiscardButton,
-  ThumbnailButton,
+  GeneratedMessage,
+  ThumbnailButtons,
+  ThumbnailDisplayer,
+  thumbnailCardStyle,
+  thumbnailMediaStyle,
+  thumbnailPageStyle,
   thumbnailTableRowTitleStyle,
-  UploadButton,
 } from "./ThumbnailSelect";
-import { selectIndex, setIsDisplayEditView } from "../redux/thumbnailSlice";
+import { selectIndex, setGeneratedAt, setIsDisplayEditView } from "../redux/thumbnailSlice";
 import { selectKeymap } from "../redux/hotkeySlice";
 import { useHotkeys } from "react-hotkeys-hook";
 import { rewriteKeys } from "../globalKeys";
@@ -69,25 +71,36 @@ const ThumbnailGeneration: React.FC = () => {
   const { t } = useTranslation();
 
   const theme = useTheme();
+  const dispatch = useAppDispatch();
 
-  const videoTracks = useAppSelector(selectVideos);
+  const tracks = useAppSelector(selectTracks);
   const index = useAppSelector(selectIndex);
   const primaryTrack = useAppSelector(selectPrimaryThumbnailTrack);
 
-  const track = videoTracks[index];
+  // Simple mode only ever edits the primary track
+  const simpleModeTrack = settings.thumbnail.simpleMode ? primaryTrack : undefined;
+  const isSimpleMode = simpleModeTrack !== undefined;
+  const track = simpleModeTrack ?? tracks[index];
 
-  // Generate Refs
-  const generateRefs = React.useRef<(VideoPlayerForwardRef | null)[]>([]);
+  const playerRef = React.useRef<VideoPlayerForwardRef>(null);
 
-
-  const thumbnailStyle = css({
-    display: "flex",
-    width: "100%",
-    height: "100%",
-    flexDirection: "column",
-    justifyContent: "center",
-    alignItems: "center",
-  });
+  // Generate image and save in redux
+  const generate = () => {
+    const uri = playerRef.current?.captureVideo();
+    if (uri === undefined) {
+      return;
+    }
+    const time = playerRef.current?.getCurrentTime();
+    const timeObject = time ? { time: time.toString(), flavorType: track.flavor.type } : undefined;
+    dispatch(setThumbnail({ id: track.id, uri: uri }));
+    dispatch(setThumbnailTime({ id: track.id, time: timeObject }));
+    dispatch(setHasChanges(true));
+    dispatch(setGeneratedAt(Date.now()));
+    // Show the result. Simple mode has nowhere to go back to, so it shows the result here.
+    if (!isSimpleMode) {
+      dispatch(setIsDisplayEditView(false));
+    }
+  };
 
   const headerRowStyle = css({
     position: "relative",
@@ -98,22 +111,15 @@ const ThumbnailGeneration: React.FC = () => {
     width: "100%",
   });
 
-  const displayAreaStyle = css({
+  // The player needs a parent with a fixed size to fill
+  const playerBoxStyle = css([thumbnailMediaStyle, {
     display: "flex",
-    flex: "1 1 0",
-    width: "100%",
-    maxWidth: "740px",
-    minHeight: "0",
-    flexDirection: "column",
-    alignItems: "center",
-    justifySelf: "stretch",
-    gap: "18px",
-  });
+  }]);
 
   const playerStyle = css({
     // Mostly just disabling the default styling with this
     aspectRatio: "16 / 9",
-    width: "90% !important",
+    width: "100% !important",
   });
 
   const horizontalLineStyle = css({
@@ -122,55 +128,57 @@ const ThumbnailGeneration: React.FC = () => {
   });
 
   return (
-    <div css={thumbnailStyle}>
+    <div css={thumbnailPageStyle}>
       <div css={headerRowStyle}>
-        { !(settings.thumbnail.simpleMode && primaryTrack !== undefined) &&
-          <BackButton />
-        }
+        { !isSimpleMode && <BackButton /> }
         <div css={[titleStyle(theme), titleStyleBold(theme)]}>{t("thumbnail.title")}</div>
+        {isSimpleMode && <GeneratedMessage />}
       </div>
-      <div css={[backgroundBoxStyle(theme), displayAreaStyle]}>
-        <div css={[thumbnailTableRowTitleStyle, { paddingBottom: 0 }]}>
-          {track.flavor.type}
+      <div css={[backgroundBoxStyle(theme), thumbnailCardStyle]}>
+        <div css={thumbnailTableRowTitleStyle}>
+          {t("thumbnail.new-title", { track: track.flavor.type })}
         </div>
-        <VideoPlayer
-          dataKey={0}
-          ref={el => {
-            if (generateRefs === undefined) { return; }
-            (generateRefs.current[index] = el);
-          }}
-          url={track.uri}
-          isPrimary={true}
-          subtitleUrl={""}
-          first={true}
-          last={true}
-          overwritePlayerCSS={playerStyle}
-          selectIsPlaying={selectIsPlaying}
-          selectIsMuted={selectIsMuted}
-          selectCurrentlyAtInSeconds={selectCurrentlyAtInSeconds}
-          selectPreviewTriggered={selectPreviewTriggered}
-          selectClickTriggered={selectClickTriggered}
-          selectJumpTriggered={selectJumpTriggered}
-          selectAspectRatio={selectAspectRatio}
-          setIsPlaying={setIsPlaying}
-          selectVolume={selectVolume}
-          setPreviewTriggered={setPreviewTriggered}
-          setClickTriggered={setClickTriggered}
-          setJumpTriggered={setJumpTriggered}
-          setCurrentlyAt={setCurrentlyAt}
-          setAspectRatio={setAspectRatio}
-        />
-        <div css={horizontalLineStyle} />
-        <ThumbnailDisplayer
+        <div css={playerBoxStyle}>
+          <VideoPlayer
+            dataKey={0}
+            ref={playerRef}
+            url={track.uri}
+            isPrimary={true}
+            subtitleUrl={""}
+            first={true}
+            last={true}
+            overwritePlayerCSS={playerStyle}
+            selectIsPlaying={selectIsPlaying}
+            selectIsMuted={selectIsMuted}
+            selectCurrentlyAtInSeconds={selectCurrentlyAtInSeconds}
+            selectPreviewTriggered={selectPreviewTriggered}
+            selectClickTriggered={selectClickTriggered}
+            selectJumpTriggered={selectJumpTriggered}
+            selectAspectRatio={selectAspectRatio}
+            setIsPlaying={setIsPlaying}
+            selectVolume={selectVolume}
+            setPreviewTriggered={setPreviewTriggered}
+            setClickTriggered={setClickTriggered}
+            setJumpTriggered={setJumpTriggered}
+            setCurrentlyAt={setCurrentlyAt}
+            setAspectRatio={setAspectRatio}
+          />
+        </div>
+        {isSimpleMode &&
+          <>
+            <div css={horizontalLineStyle} />
+            <ThumbnailDisplayer track={track} />
+          </>
+        }
+        <ThumbnailButtons
           track={track}
+          onGenerate={generate}
+          opensGeneration={false}
+          generating={!isSimpleMode}
+          allowUseForAll={!isSimpleMode && tracks.length > 1}
         />
       </div>
       <div css={videosStyle(theme)}>
-        <ThumbnailActions
-          generateRefs={generateRefs}
-          track={track}
-          index={index}
-        />
         <Timeline
           timelineHeight={125}
           styleByActiveSegment={false}
@@ -180,6 +188,7 @@ const ThumbnailGeneration: React.FC = () => {
           setCurrentlyAt={setCurrentlyAt}
           setClickTriggered={setClickTriggered}
         />
+        <ZoomControls />
         <VideoControls
           selectCurrentlyAt={selectCurrentlyAt}
           selectIsPlaying={selectIsPlaying}
@@ -199,33 +208,13 @@ const ThumbnailGeneration: React.FC = () => {
   );
 };
 
-const ThumbnailActions: React.FC<{
-  generateRefs: React.MutableRefObject<(VideoPlayerForwardRef | null)[]>,
-  track: Track,
-  index: number
-}> = ({
-  generateRefs,
-  track,
-  index,
-}) => {
+/**
+ * Zoom for the timeline
+ */
+const ZoomControls: React.FC = () => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const keymap = useAppSelector(selectKeymap);
-  const theme = useTheme();
-
-  const primaryTrack = useAppSelector(selectPrimaryThumbnailTrack);
-
-  // Generate image and save in redux
-  //   *track: Generate to
-  //   *index: Generate from
-  const generate = (track: Track, index: number) => {
-    const time = generateRefs.current[index]?.getCurrentTime();
-    const timeObject = time ? { time: time.toString(), flavorType: track.flavor.type } : undefined;
-    const uri = generateRefs.current[index]?.captureVideo();
-    dispatch(setThumbnail({ id: track.id, uri: uri }));
-    dispatch(setThumbnailTime({ id: track.id, time: timeObject }));
-    dispatch(setHasChanges(true));
-  };
 
   // Callback for the zoom slider/dropdown, dispatching the zoom action to redux
   const dispatchZoomAction = (
@@ -255,60 +244,16 @@ const ThumbnailActions: React.FC<{
     [],
   );
 
-  const thumbnailActionsStyle = css({
+  const zoomStyle = css({
     display: "flex",
     flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
-
     flexWrap: "wrap",
   });
 
-  const thumbnailButtonStyle = css({
-    padding: "16px",
-    fontSize: "20px",
-    fontWeight: "bold",
-  });
-
-  const verticalLineStyle = css({
-    borderLeft: "2px solid #DDD;",
-    height: "32px",
-  });
-
   return (
-    <div css={thumbnailActionsStyle}>
-      { (settings.thumbnail.simpleMode && primaryTrack !== undefined) &&
-        <>
-          <div css={verticalLineStyle} />
-          <UploadButton
-            track={track}
-            index={12}
-            overwriteCSS={css([basicButtonStyle(theme), thumbnailButtonStyle])}
-          />
-        </>
-      }
-      <div css={verticalLineStyle} />
-      <ThumbnailButton
-        handler={() => { generate(track, index); }}
-        text={t("thumbnail.buttonGenerate")}
-        tooltipText={t("thumbnail.buttonGenerate-tooltip")}
-        ariaLabel={t("thumbnail.buttonGenerate-tooltip-aria")}
-        Icon={LuCamera}
-        active={true}
-        index={0}
-        overwriteCSS={css([basicButtonStyle(theme), thumbnailButtonStyle])}
-      />
-      <div css={verticalLineStyle} />
-      { (settings.thumbnail.simpleMode && primaryTrack !== undefined) &&
-        <>
-          <DiscardButton
-            track={track}
-            index={12}
-            overwriteCSS={css([basicButtonStyle(theme), thumbnailButtonStyle])}
-          />
-          <div css={verticalLineStyle} />
-        </>
-      }
+    <div css={zoomStyle}>
       <ZoomSlider actionHandler={dispatchZoomAction}
         tooltip={t("cuttingActions.zoomSlider-tooltip", {
           hotkeyNameIn: rewriteKeys(keymap.cutting.zoomIn.key),
@@ -321,59 +266,6 @@ const ThumbnailActions: React.FC<{
       />
       <ZoomDropdown />
     </div>
-  );
-};
-
-/**
- * Copied from ThumbnailSelect to fine tune some CSS
- */
-const ThumbnailDisplayer: React.FC<{
-  track: Track
-}> = ({
-  track,
-}) => {
-
-  const { t } = useTranslation();
-  const theme = useTheme();
-
-  const generalStyle = css({
-    width: "100%",
-    maxWidth: "540px",
-    aspectRatio: "16/9",
-    flex: "1 1 0",
-    minHeight: "0",
-    objectFit: "contain",
-  });
-
-  const imageStyle = css({
-    maxWidth: "457px",
-  });
-
-  const placeholderStyle = css({
-    width: "100vw", // TODO: This is necessary to make the placeholder large enough, but prevents it from shrinking
-    maxWidth: "457px",
-    backgroundColor: "grey",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    color: `${theme.text}`,
-  });
-
-  return (
-    <>
-      {(track.thumbnailUri !== null && track.thumbnailUri !== undefined) ?
-        // Thumbnail image
-        <img src={track.thumbnailUri}
-          alt={t("thumbnail.previewImageAlt") + ": " + track.flavor.type}
-          css={[generalStyle, imageStyle]}
-        />
-        :
-        // Placeholder
-        <div css={[generalStyle, placeholderStyle]}>
-          <span>{t("thumbnail.noThumbnailAvailable")}</span>
-        </div>
-      }
-    </>
   );
 };
 

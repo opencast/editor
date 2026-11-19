@@ -1,14 +1,17 @@
-import { css, SerializedStyles } from "@emotion/react";
+import { css } from "@emotion/react";
 import { IconType } from "react-icons";
-import { LuCamera, LuCopy, LuCircleX, LuUpload } from "react-icons/lu";
+import { LuCopy, LuCircleX, LuFilm, LuUpload } from "react-icons/lu";
 import React, { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { TFunction } from "i18next";
+import Select from "react-select";
 import { useAppDispatch, useAppSelector } from "../redux/store";
 import {
   basicButtonStyle, deactivatedButtonStyle,
-  backgroundBoxStyle,
+  backgroundBoxStyle, BREAKPOINTS, MyOptionType, selectFieldStyle, titleStyle, titleStyleBold, undisplay,
+  verticalLineStyle,
 } from "../cssStyles";
-import { Theme, useTheme } from "../themes";
+import { useTheme } from "../themes";
 import {
   selectOriginalThumbnails,
   selectTracks,
@@ -20,95 +23,139 @@ import {
 import { Track } from "../types";
 import { ThemedTooltip } from "./Tooltip";
 import { ProtoButton } from "@opencast/appkit";
-import { setIndex, setIsDisplayEditView } from "../redux/thumbnailSlice";
+import { selectGeneratedAt, selectIndex, setIndex, setIsDisplayEditView } from "../redux/thumbnailSlice";
+import Notification from "./Notification";
 import ReactPlayer from "react-player";
 
 /**
- * Choose between various thumbnail actions for the available tracks.
+ * Shows the thumbnail of one track, with a dropdown to switch between the tracks.
  */
 const ThumbnailSelect: React.FC = () => {
 
-  const tracks = useAppSelector(selectTracks);
+  const { t } = useTranslation();
+  const theme = useTheme();
+  const dispatch = useAppDispatch();
 
-  const thumbnailSelectStyle = css({
-    display: "flex",
+  const tracks = useAppSelector(selectTracks);
+  const index = useAppSelector(selectIndex);
+
+  const track = tracks[index];
+  if (track === undefined) {
+    return null;
+  }
+
+  const selectorStyle = css({
     width: "100%",
-    height: "100%",
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    flexWrap: "wrap",
-    gap: "60px",
+    maxWidth: "300px",
+    "& > label": {
+      display: "block",
+      textAlign: "center",
+      paddingBottom: "6px",
+    },
+  });
+
+  const options: MyOptionType[] = tracks.map((track, i) => ({
+    label: trackLabel(t, track),
+    value: i.toString(),
+  }));
+
+  return (
+    <div css={thumbnailPageStyle}>
+      <div css={[titleStyle(theme), titleStyleBold(theme)]}>{t("thumbnail.title")}</div>
+      <GeneratedMessage />
+      <div css={[backgroundBoxStyle(theme), thumbnailCardStyle]}>
+        <div css={thumbnailTableRowTitleStyle}>
+          {t("thumbnail.current-title", { track: track.flavor.type })}
+        </div>
+        <ThumbnailDisplayer track={track} />
+        <ThumbnailButtons
+          track={track}
+          onGenerate={() => dispatch(setIsDisplayEditView(true))}
+          opensGeneration={true}
+          generating={false}
+          allowUseForAll={tracks.length > 1}
+        />
+      </div>
+      {tracks.length > 1 &&
+        <div css={selectorStyle}>
+          <label htmlFor="thumbnail-track-select">{t("thumbnail.selectTrack-label")}</label>
+          <Select<MyOptionType, false>
+            inputId="thumbnail-track-select"
+            styles={selectFieldStyle(theme)}
+            isSearchable={false}
+            options={options}
+            value={options[index]}
+            onChange={option => {
+              if (option) {
+                dispatch(setIndex(parseInt(option.value)));
+              }
+            }}
+          />
+        </div>
+      }
+      {tracks.map(track =>
+        <WorkaroundThumbnailGenerator key={track.id} track={track} />,
+      )}
+    </div>
+  );
+};
+
+const MESSAGE_DURATION = 5000;
+
+/**
+ * Tells the user that a thumbnail was just generated
+ */
+export const GeneratedMessage: React.FC = () => {
+
+  const { t } = useTranslation();
+
+  const generatedAt = useAppSelector(selectGeneratedAt);
+  const [visible, setVisible] = useState(false);
+
+  // Hide the message again after a while. Starts over when generating again.
+  useEffect(() => {
+    if (generatedAt === undefined || Date.now() - generatedAt > MESSAGE_DURATION) {
+      return;
+    }
+    setVisible(true);
+    const timeout = setTimeout(() => setVisible(false), MESSAGE_DURATION);
+    return () => clearTimeout(timeout);
+  }, [generatedAt]);
+
+  const messageStyle = css({
+    position: "absolute",
+    top: "12px",
+    right: "2%",
+    zIndex: 1,
   });
 
   return (
-    <div css={thumbnailSelectStyle}>
-      {tracks.map((track: Track, index: number) => (
-        <ThumbnailSelector
-          key={index}
-          track={track}
-          trackIndex={index}
-        />
-      ))}
+    <div css={messageStyle} role="status">
+      {visible && <Notification>{t("thumbnail.generated-text")}</Notification>}
     </div>
   );
 };
 
 /**
- * Component for a single track
+ * Name of a track, including whether it is the one used as the video preview
  */
-const ThumbnailSelector: React.FC<{
-  track: Track,
-  trackIndex: number,
-}> = ({ track, trackIndex }) => {
-
-  const { t } = useTranslation();
-  const theme = useTheme();
-
-  const renderPriority = (thumbnailPriority: number) => {
-    if (isNaN(thumbnailPriority)) {
-      return "";
-    } else if (thumbnailPriority === 0) {
-      return " - " + t("thumbnail.primary");
-    } else if (thumbnailPriority === 1) {
-      return " - " + t("thumbnail.secondary");
-    } else if (thumbnailPriority < 0) {
-      return "";
-    } else {
-      return " - " + thumbnailPriority;
-    }
-  };
-
-  const thumbnailSelectorStyle = (maxWidth: number) => css({
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    width: "100%",
-    maxWidth: `${maxWidth}px`,
-    padding: "14px 20px",
-    gap: "0px",
-  });
-
-  return (
-    <div key={trackIndex} css={[backgroundBoxStyle(theme), thumbnailSelectorStyle(540)]}>
-      <div css={thumbnailTableRowTitleStyle}>
-        {track.flavor.type + renderPriority(track.thumbnailPriority)}
-      </div>
-      <ThumbnailDisplayer track={track} />
-      <ThumbnailButtons
-        track={track}
-        trackIndex={trackIndex}
-      />
-      <WorkaroundThumbnailGenerator track={track} />
-    </div>
-  );
+const trackLabel = (t: TFunction, track: Track) => {
+  const priority = track.thumbnailPriority;
+  if (isNaN(priority) || priority < 0) {
+    return track.flavor.type;
+  } else if (priority === 0) {
+    return `${track.flavor.type} - ${t("thumbnail.primary")}`;
+  } else if (priority === 1) {
+    return `${track.flavor.type} - ${t("thumbnail.secondary")}`;
+  }
+  return `${track.flavor.type} - ${priority}`;
 };
 
 /**
  * Displays thumbnail associated with the given track
  * or a placeholder
  */
-const ThumbnailDisplayer: React.FC<{
+export const ThumbnailDisplayer: React.FC<{
   track: Track
 }> = ({
   track,
@@ -117,19 +164,7 @@ const ThumbnailDisplayer: React.FC<{
   const { t } = useTranslation();
   const theme = useTheme();
 
-  const generalStyle = css({
-    width: "100%",
-    maxWidth: "540px",
-    aspectRatio: "16/9",
-  });
-
-  const imageStyle = css({
-    maxWidth: "457px",
-  });
-
   const placeholderStyle = css({
-    width: "100vw", // TODO: This is necessary to make the placeholder large enough, but prevents it from shrinking
-    maxWidth: "457px",
     backgroundColor: "grey",
     display: "flex",
     justifyContent: "center",
@@ -143,11 +178,11 @@ const ThumbnailDisplayer: React.FC<{
         // Thumbnail image
         <img src={track.thumbnailUri}
           alt={t("thumbnail.previewImageAlt") + ": " + track.flavor.type}
-          css={[generalStyle, imageStyle]}
+          css={thumbnailMediaStyle}
         />
         :
         // Placeholder
-        <div css={[generalStyle, placeholderStyle]}>
+        <div css={[thumbnailMediaStyle, placeholderStyle]}>
           <span>{t("thumbnail.noThumbnailAvailable")}</span>
         </div>
       }
@@ -157,74 +192,59 @@ const ThumbnailDisplayer: React.FC<{
 
 /**
  * Buttons and actions related to thumbnails for a given track
+ *
+ * While a thumbnail is being generated, the buttons that would replace it are deactivated.
+ * The generate button either generates right away, or opens the view for it.
  */
-const ThumbnailButtons: React.FC<{
+export const ThumbnailButtons: React.FC<{
   track: Track,
-  trackIndex: number,
-}> = ({ track, trackIndex }) => {
+  onGenerate: () => void,
+  opensGeneration: boolean,
+  generating: boolean,
+  allowUseForAll: boolean,
+}> = ({ track, onGenerate, opensGeneration, generating, allowUseForAll }) => {
 
-  const tracks = useAppSelector(selectTracks);
+  const { t } = useTranslation();
 
+  const generateTooltip = opensGeneration
+    ? t("thumbnail.buttonGoToGeneration-tooltip")
+    : t("thumbnail.buttonGenerate-tooltip");
+  const generateAriaLabel = opensGeneration
+    ? t("thumbnail.buttonGoToGeneration-tooltip-aria")
+    : t("thumbnail.buttonGenerate-tooltip-aria");
+
+  // Always one row. Longer labels wrap inside their button instead.
   const thumbnailButtonsStyle = css({
-    display: "grid",
-    gridTemplateColumns: "1fr 1fr",
-    gridTemplateRows: "1fr 1fr",
+    display: "flex",
+    alignItems: "center",
     width: "100%",
-    maxWidth: "457px",
   });
 
   return (
     <div css={thumbnailButtonsStyle}>
-      <UploadButton
-        track={track}
-        index={0}
-      />
+      <UploadButton track={track} disabled={generating} />
       {track.video_stream.available &&
-        <ToGenerationButton
-          trackIndex={trackIndex}
-          index={1}
-        />
+        <>
+          <div css={verticalLineStyle} />
+          <ThumbnailButton
+            handler={onGenerate}
+            text={t("thumbnail.buttonGenerate")}
+            tooltipText={generateTooltip}
+            ariaLabel={generateAriaLabel}
+            Icon={LuFilm}
+            active={true}
+          />
+        </>
       }
-      <DiscardButton
-        track={track}
-        index={2}
-      />
-      {tracks.length > 1 &&
-        <UseForAllTracksButton
-          track={track}
-          index={3}
-        />
+      <div css={verticalLineStyle} />
+      <DiscardButton track={track} disabled={generating} />
+      {allowUseForAll &&
+        <>
+          <div css={verticalLineStyle} />
+          <UseForAllTracksButton track={track} disabled={generating} />
+        </>
       }
     </div>
-  );
-};
-
-/**
- * Button for switching to generation view
- */
-const ToGenerationButton: React.FC<{
-  trackIndex: number,
-  index: number,
-}> = ({ trackIndex, index }) => {
-  const { t } = useTranslation();
-  const dispatch = useAppDispatch();
-
-  // Switch views
-  const switchToGeneration = (index: number) => {
-    dispatch(setIsDisplayEditView(true));
-    dispatch(setIndex(index));
-  };
-
-  return (
-    <ThumbnailButton
-      handler={() => { switchToGeneration(trackIndex); }}
-      text={t("thumbnail.buttonGenerate")}
-      tooltipText={t("thumbnail.buttonGenerate-tooltip")}
-      ariaLabel={t("thumbnail.buttonGenerate-tooltip-aria")}
-      Icon={LuCamera}
-      active={true}
-      index={index}
-    />
   );
 };
 
@@ -233,23 +253,12 @@ const ToGenerationButton: React.FC<{
  */
 export const UploadButton: React.FC<{
   track: Track,
-  index: number,
-  overwriteCSS?: SerializedStyles
-}> = ({ track, index, overwriteCSS }) => {
+  disabled?: boolean,
+}> = ({ track, disabled = false }) => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
 
-  // Upload Refs
-  const inputRefs = React.useRef<(HTMLInputElement | null)[]>([]);
-
-  // Trigger file handler for upload input element
-  const upload = (index: number) => {
-    // open file input box on click of other element
-    const ref = inputRefs.current[index];
-    if (ref !== null) {
-      ref.click();
-    }
-  };
+  const inputRef = React.useRef<HTMLInputElement>(null);
 
   // Save uploaded file in redux
   const uploadCallback = (event: React.ChangeEvent<HTMLInputElement>, track: Track) => {
@@ -279,21 +288,18 @@ export const UploadButton: React.FC<{
   return (
     <>
       <ThumbnailButton
-        handler={() => { upload(index); }}
+        // Open the file input box
+        handler={() => { inputRef.current?.click(); }}
         text={t("thumbnail.buttonUpload")}
         tooltipText={t("thumbnail.buttonUpload-tooltip")}
         ariaLabel={t("thumbnail.buttonUpload-tooltip-aria")}
         Icon={LuUpload}
-        active={true}
-        index={0}
-        overwriteCSS={overwriteCSS}
+        active={!disabled}
       />
       {/* Hidden input field for upload */}
       <input
         style={{ display: "none" }}
-        ref={el => {
-          inputRefs.current[index] = el;
-        }}
+        ref={inputRef}
         type="file"
         accept="image/*"
         onChange={event => uploadCallback(event, track)}
@@ -308,17 +314,18 @@ export const UploadButton: React.FC<{
  */
 export const DiscardButton: React.FC<{
   track: Track,
-  index: number,
-  overwriteCSS?: SerializedStyles
-}> = ({ track, index, overwriteCSS }) => {
+  disabled?: boolean,
+}> = ({ track, disabled = false }) => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
 
   const originalThumbnails = useAppSelector(selectOriginalThumbnails);
 
   const originalThumbnail = originalThumbnails.find(e => e.id === track.id);
-  const active = (track.thumbnailUri && track.thumbnailUri.startsWith("data") && !track.thumbnailTime)
-    || (track.thumbnailTime && originalThumbnail && track.thumbnailTime != originalThumbnail.time);
+  const active = !disabled && (
+    (track.thumbnailUri && track.thumbnailUri.startsWith("data") && !track.thumbnailTime)
+    || (track.thumbnailTime && originalThumbnail && track.thumbnailTime != originalThumbnail.time)
+  );
 
   const discardThumbnail = (id: string) => {
     dispatch(setThumbnail({ id: id, uri: originalThumbnail?.uri }));
@@ -333,8 +340,6 @@ export const DiscardButton: React.FC<{
       ariaLabel={t("thumbnail.buttonDiscard-tooltip-aria")}
       Icon={LuCircleX}
       active={(active ? true : false)}
-      index={index}
-      overwriteCSS={overwriteCSS}
     />
   );
 };
@@ -344,8 +349,8 @@ export const DiscardButton: React.FC<{
  */
 export const UseForAllTracksButton: React.FC<{
   track: Track,
-  index: number,
-}> = ({ track, index }) => {
+  disabled?: boolean,
+}> = ({ track, disabled = false }) => {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
 
@@ -371,8 +376,7 @@ export const UseForAllTracksButton: React.FC<{
       tooltipText={t("thumbnail.buttonUseForOtherThumbnails-tooltip")}
       ariaLabel={t("thumbnail.buttonUseForOtherThumbnails-tooltip-aria")}
       Icon={LuCopy}
-      active={(track.thumbnailUri && track.thumbnailUri.startsWith("data") ? true : false)}
-      index={index}
+      active={!disabled && (track.thumbnailUri && track.thumbnailUri.startsWith("data") ? true : false)}
     />
   );
 };
@@ -386,10 +390,8 @@ export const ThumbnailButton: React.FC<{
   tooltipText: string,
   ariaLabel: string,
   Icon: IconType,
-  index: number,
   active: boolean,
-  overwriteCSS?: SerializedStyles
-}> = ({ handler, text, tooltipText, ariaLabel, Icon, active, index, overwriteCSS }) => {
+}> = ({ handler, text, tooltipText, ariaLabel, Icon, active }) => {
   const theme = useTheme();
   const ref = React.useRef<HTMLButtonElement>(null);
 
@@ -403,48 +405,19 @@ export const ThumbnailButton: React.FC<{
     }
   };
 
-  const thumbnailButtonStyle = (active: boolean, theme: Theme, index: number) => css([
+  const thumbnailButtonStyle = css([
     active ? basicButtonStyle(theme) : deactivatedButtonStyle,
     {
-      width: "100%",
+      flex: "1 1 auto",
+      minWidth: 0,
       minHeight: "60px",
-      height: "100%",
-      background: `${theme.element_bg}`,
-      padding: "10px 20px",
-      fontSize: "20px",
+      background: theme.element_bg,
+      padding: "10px 12px",
+      fontSize: "16px",
       fontWeight: "bold",
-
-      position: "relative",
-      /* Vertical line (after 1st & 3rd items) */
-      ...(index === 0 || index === 2
-        ? {
-          "&::after": {
-            content: '""',
-            position: "absolute",
-            top: "10%",
-            bottom: "10%",
-            right: 0,
-            width: "1px",
-            backgroundColor: "#DDD",
-            pointerEvents: "none",
-          },
-        }
-        : {}),
-      /* Horizontal line (below 1st & 2nd items) */
-      ...(index === 0 || index === 1
-        ? {
-          "&::before": {
-            content: '""',
-            position: "absolute",
-            left: "10%",
-            right: "10%",
-            bottom: 0,
-            height: "1px",
-            backgroundColor: "#DDD",
-            pointerEvents: "none",
-          },
-        }
-        : {}),
+      "& > svg": {
+        flexShrink: 0,
+      },
     },
   ]);
 
@@ -453,12 +426,14 @@ export const ThumbnailButton: React.FC<{
       <ProtoButton
         {...{ ref }}
         aria-label={ariaLabel}
+        aria-disabled={!active}
         onClick={clickHandler}
         onKeyDown={keyHandler}
-        css={overwriteCSS ?? thumbnailButtonStyle(active, theme, index)}
+        css={thumbnailButtonStyle}
       >
         <Icon />
-        {text}
+        {/* Only the icon is left on small screens. The tooltip and aria label still say what it does. */}
+        <span css={undisplay(BREAKPOINTS.medium)}>{text}</span>
       </ProtoButton>
     </ThemedTooltip>
   );
@@ -512,7 +487,8 @@ const WorkaroundThumbnailGenerator: React.FC<{
   }, [dispatch, ready, seeked, track]);
 
   const playerStyle = css({
-    display: "none",
+    // The player sets `display: block` inline, which would otherwise win
+    display: "none !important",
   });
 
   if (!thumbnailTrack) {
@@ -535,16 +511,37 @@ const WorkaroundThumbnailGenerator: React.FC<{
 /**
  * Shared CSS
  */
+
+// The page, card and media of the overview and the generation view. They share
+// these so that the card does not move when switching between the views.
+export const thumbnailPageStyle = css({
+  position: "relative",
+  display: "flex",
+  width: "100%",
+  flexDirection: "column",
+  alignItems: "center",
+  gap: "16px",
+});
+
+export const thumbnailCardStyle = css({
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  width: "100%",
+  maxWidth: "740px",
+});
+
+export const thumbnailMediaStyle = css({
+  width: "100%",
+  maxWidth: "540px",
+  aspectRatio: "16 / 9",
+});
+
 export const thumbnailTableRowTitleStyle = css({
   textAlign: "center",
   fontSize: "larger",
   fontWeight: "bold",
-  "&:first-letter": {
-    textTransform: "capitalize",
-  },
   paddingBottom: "14px",
 });
-
-
 
 export default ThumbnailSelect;
