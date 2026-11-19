@@ -123,6 +123,9 @@ const SubtitleVideoArea: React.FC<{
     display: "block",
     height: "100%",
     width: "40%",
+    // Line up with the first row of the list, which has the same padding above it
+    boxSizing: "border-box",
+    paddingTop: "10px",
   });
 
   const videoPlayerAreaStyle = css({
@@ -229,18 +232,27 @@ const VideoSelectDropdown: React.FC<{
     value: stringifyFlavor(flavor),
   }));
 
-  const subtitleAddFormStyle = css({
+  const rowStyle = css({
+    display: "flex",
+    alignItems: "center",
+    gap: "10px",
     width: "100%",
   });
 
+  const selectStyle = css({
+    flex: 1,
+    minWidth: 0,
+  });
+
   return (
-    <>
-      <div>{t("subtitleVideoArea.selectVideoLabel")}</div>
+    <div css={rowStyle}>
+      <label htmlFor={dropdownName}>{t("subtitleVideoArea.selectVideoLabel")}</label>
       <Select
         name={dropdownName}
+        inputId={dropdownName}
         styles={selectFieldStyle(theme)}
         isMulti={false}
-        css={subtitleAddFormStyle}
+        css={selectStyle}
         options={data}
         defaultValue={data.filter(({ value }) => value === stringifyFlavor(defaultFlavor))}
         onChange={
@@ -254,7 +266,7 @@ const VideoSelectDropdown: React.FC<{
           }
         }
       />
-    </>
+    </div>
   );
 };
 

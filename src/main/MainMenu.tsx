@@ -4,7 +4,7 @@ import { css, SerializedStyles } from "@emotion/react";
 
 import { IconType } from "react-icons";
 import {
-  LuScissors, LuFilm, LuFileText, LuBookOpenText, LuChevronLeft, LuChevronRight,
+  LuScissors, LuFilm, LuFileText, LuTableOfContents, LuChevronLeft, LuChevronRight,
 } from "react-icons/lu";
 import { LuImage } from "react-icons/lu";
 import SubtitleIcon from "../img/subtitle.svg?react";
@@ -124,7 +124,7 @@ const MainMenu: React.FC = () => {
           ariaLabelText={t(MainMenuStateNames.subtitles)}
         />}
         {settings.chapters.show && <MainMenuButton
-          Icon={LuBookOpenText}
+          Icon={LuTableOfContents}
           stateName={MainMenuStateNames.chapters}
           bottomText={label(MainMenuStateNames.chapters)}
           ariaLabelText={t(MainMenuStateNames.chapters)}
