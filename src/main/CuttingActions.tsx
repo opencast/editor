@@ -7,6 +7,7 @@ import {
   customIconStyle,
   selectFieldStyle,
   undisplay,
+  verticalLineStyle,
 } from "../cssStyles";
 
 import { IconType } from "react-icons";
@@ -138,11 +139,6 @@ const CuttingActions: React.FC<{
     alignItems: "center",
 
     flexWrap: "wrap",
-  });
-
-  const verticalLineStyle = css({
-    borderLeft: "2px solid #DDD;",
-    height: "32px",
   });
 
   return (

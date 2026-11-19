@@ -120,6 +120,14 @@ export const actionButtonStyle = (theme: Theme, accent = false) => css({
 });
 
 /**
+ * CSS for a thin divider between buttons in a row
+ */
+export const verticalLineStyle = css({
+  borderLeft: "2px solid #DDD",
+  height: "32px",
+});
+
+/**
  * CSS for big buttons in a dynamic grid
  */
 export const tileButtonStyle = (theme: Theme) => css({
