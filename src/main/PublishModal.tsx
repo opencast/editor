@@ -7,7 +7,7 @@ import { FormControlLabel, Radio, RadioGroup } from "@mui/material";
 import { ErrorBox, Modal, ModalHandle, ProtoButton, Spinner } from "@opencast/appkit";
 
 import { useAppDispatch, useAppSelector } from "../redux/store";
-import { selectWorkflows, setSelectedWorkflowIndex } from "../redux/videoSlice";
+import { selectSelectedWorkflowId, selectWorkflows, setSelectedWorkflowIndex } from "../redux/videoSlice";
 import { selectError, selectStatus } from "../redux/workflowPostSlice";
 import { actionButtonStyle } from "../cssStyles";
 import { useTheme } from "../themes";
@@ -53,6 +53,7 @@ const PublishContent: React.FC<{
 
   // Need to make copy to handle undefined displayOrder values
   const workflows = [...useAppSelector(selectWorkflows)].sort((a, b) => b.displayOrder - a.displayOrder);
+  const selectedWorkflowId = useAppSelector(selectSelectedWorkflowId);
 
   useEffect(() => {
     if (workflows.length >= 1) {
@@ -129,7 +130,7 @@ const PublishContent: React.FC<{
         {workflows.length > 0 &&
           <ProtoButton
             aria-disabled={isSaving}
-            onClick={() => !isSaving && save(true)}
+            onClick={() => !isSaving && selectedWorkflowId && save(selectedWorkflowId)}
             css={actionButtonStyle(theme, true)}
           >
             {isSaving ? <Spinner size={20} /> : <LuMonitorUp />}

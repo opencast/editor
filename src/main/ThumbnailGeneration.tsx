@@ -94,7 +94,7 @@ const ThumbnailGeneration: React.FC = () => {
     const timeObject = time ? { time: time.toString(), flavorType: track.flavor.type } : undefined;
     dispatch(setThumbnail({ id: track.id, uri: uri }));
     dispatch(setThumbnailTime({ id: track.id, time: timeObject }));
-    dispatch(setHasChanges(true));
+    dispatch(setHasChanges({ thumbnails: true }));
     dispatch(setGeneratedAt(Date.now()));
     // Show the result. Simple mode has nowhere to go back to, so it shows the result here.
     if (!isSimpleMode) {

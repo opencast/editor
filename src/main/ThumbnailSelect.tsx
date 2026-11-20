@@ -279,7 +279,7 @@ export const UploadButton: React.FC<{
         const uri = e.target.result as string; // We know this must be string because we use "readAsDataURL"
         dispatch(setThumbnail({ id: track.id, uri: uri }));
         dispatch(setThumbnailTime({ id: track.id, time: undefined }));
-        dispatch(setHasChanges(true));
+        dispatch(setHasChanges({ thumbnails: true }));
       }
     };
     reader.readAsDataURL(fileObj);
@@ -366,7 +366,7 @@ export const UseForAllTracksButton: React.FC<{
       thumbnails.push({ id: track.id, uri, time });
     }
     dispatch(setThumbnails(thumbnails));
-    dispatch(setHasChanges(true));
+    dispatch(setHasChanges({ thumbnails: true }));
   };
 
   return (

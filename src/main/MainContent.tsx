@@ -15,9 +15,7 @@ import { selectMainMenuState } from "../redux/mainMenuSlice";
 import { MainMenuStateNames } from "../types";
 
 import { useBeforeunload } from "react-beforeunload";
-import { selectHasChanges as videoSelectHasChanges } from "../redux/videoSlice";
-import { selectHasChanges as metadataSelectHasChanges } from "../redux/metadataSlice";
-import { selectHasChanges as selectSubtitleHasChanges } from "../redux/subtitleSlice";
+import { useHasUnsavedChanges } from "../util/useSaveChanges";
 import { useTheme } from "../themes";
 import Thumbnail from "./Thumbnail";
 import Cutting from "./Cutting";
@@ -30,14 +28,12 @@ import Chapter from "./Chapter";
 const MainContent: React.FC = () => {
 
   const mainMenuState = useAppSelector(selectMainMenuState);
-  const videoChanged = useAppSelector(videoSelectHasChanges);
-  const metadataChanged = useAppSelector(metadataSelectHasChanges);
-  const subtitleChanged = useAppSelector(selectSubtitleHasChanges);
+  const hasUnsavedChanges = useHasUnsavedChanges();
   const theme = useTheme();
 
   // Display warning when leaving the page if there are unsaved changes
   useBeforeunload((event: { preventDefault: () => void; }) => {
-    if (videoChanged || metadataChanged || subtitleChanged) {
+    if (hasUnsavedChanges) {
       event.preventDefault();
     }
   });

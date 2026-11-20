@@ -47,6 +47,8 @@ export const postVideoInformation =
         subtitles: argument.subtitles,
         chapters: argument.chapters,
         workflows: argument.workflow,
+        // eslint-disable-next-line camelcase
+        changed_areas: argument.changedAreas,
         metadataJSON: JSON.stringify(catalogsJson),
       },
     );

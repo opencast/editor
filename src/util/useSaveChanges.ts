@@ -3,9 +3,8 @@ import { useTranslation } from "react-i18next";
 import { useAppDispatch, useAppSelector } from "../redux/store";
 import {
   selectCustomizedTrackSelection,
-  selectHasChanges as videoSelectHasChanges,
+  selectUnsavedAreas as selectUnsavedVideoAreas,
   selectSegments,
-  selectSelectedWorkflowId,
   selectTracks,
   setHasChanges as videoSetHasChanges,
 } from "../redux/videoSlice";
@@ -26,8 +25,9 @@ import {
   setHasChanges as chapterSetHasChanges,
 } from "../redux/chapterSlice";
 import { setEnd } from "../redux/endSlice";
+import { addChangedAreas, clearChangedAreas, selectChangedAreas } from "../redux/workflowSelectionSlice";
 import { serializeSubtitle } from "./utilityFunctions";
-import { Segment, SubtitlesInEditor } from "../types";
+import { Area, AREAS, Segment, SubtitlesInEditor } from "../types";
 
 const prepareSubtitles = (subs: { [identifier: string]: SubtitlesInEditor; }) =>
   Object.entries(subs).map(([id, { deleted, cues, tags }]) => ({
@@ -42,19 +42,34 @@ const validateSegmentLength = (segments: Segment[]) => {
 };
 
 /**
+ * The areas in which the user changed something since the last save
+ */
+export const useUnsavedAreas = (): Area[] => {
+  const video = useAppSelector(selectUnsavedVideoAreas);
+  const metadata = useAppSelector(metadataSelectHasChanges);
+  const subtitles = useAppSelector(subtitleSelectHasChanges);
+  const chapters = useAppSelector(chapterSelectHasChanges);
+  const changed: Record<Area, boolean> = { ...video, metadata, subtitles, chapters };
+  return AREAS.filter(area => changed[area]);
+};
+
+/**
  * Whether the user changed anything since the last save
  */
-export const useHasUnsavedChanges = () => {
-  const videoChanged = useAppSelector(videoSelectHasChanges);
-  const metadataChanged = useAppSelector(metadataSelectHasChanges);
-  const subtitleChanged = useAppSelector(subtitleSelectHasChanges);
-  const chapterChanged = useAppSelector(chapterSelectHasChanges);
-  return videoChanged || metadataChanged || subtitleChanged || chapterChanged;
+export const useHasUnsavedChanges = () => useUnsavedAreas().length > 0;
+
+/**
+ * The areas in which the user changed something since the video was last published, saved or not
+ */
+export const useChangedAreas = (): Area[] => {
+  const sinceLastPublish = useAppSelector(selectChangedAreas);
+  const unsaved = useUnsavedAreas();
+  return AREAS.filter(area => sinceLastPublish.includes(area) || unsaved.includes(area));
 };
 
 /**
  * Returns a function that sends the current changes to Opencast.
- * If `startWorkflow` is true, the selected workflow is started and the editor ends.
+ * If a workflow id is given, that workflow is started and the editor ends.
  */
 export const useSaveChanges = () => {
   const { t } = useTranslation();
@@ -66,13 +81,22 @@ export const useSaveChanges = () => {
   const subtitles = useAppSelector(selectSubtitles);
   const chapters = useAppSelector(selectChapters);
   const metadata = useAppSelector(selectAllCatalogs);
-  const selectedWorkflowId = useAppSelector(selectSelectedWorkflowId);
-  const videoChanged = useAppSelector(videoSelectHasChanges);
-  const metadataChanged = useAppSelector(metadataSelectHasChanges);
-  const subtitleChanged = useAppSelector(subtitleSelectHasChanges);
-  const chapterChanged = useAppSelector(chapterSelectHasChanges);
+  const unsavedAreas = useUnsavedAreas();
+  const changedAreas = useChangedAreas();
 
-  const saveChanges = async (startWorkflow: boolean) => {
+  // Marks the given areas as having unsaved changes, or not
+  const setUnsaved = (areas: readonly Area[], unsaved: boolean) => {
+    dispatch(videoSetHasChanges({
+      ...(areas.includes("cutting") && { cutting: unsaved }),
+      ...(areas.includes("tracks") && { tracks: unsaved }),
+      ...(areas.includes("thumbnails") && { thumbnails: unsaved }),
+    }));
+    if (areas.includes("metadata")) { dispatch(metadataSetHasChanges(unsaved)); }
+    if (areas.includes("subtitles")) { dispatch(subtitleSetHasChanges(unsaved)); }
+    if (areas.includes("chapters")) { dispatch(chapterSetHasChanges(unsaved)); }
+  };
+
+  const saveChanges = async (workflowId?: string) => {
     if (!validateSegmentLength(segments)) {
       dispatch(setPostRequestError(t("workflowSelection.error-segmentsTooShort")));
       return;
@@ -80,10 +104,7 @@ export const useSaveChanges = () => {
 
     // The user can keep editing while we save. Anything they change in the meantime sets the flags again,
     // so these can not simply be cleared once the request is done.
-    dispatch(videoSetHasChanges(false));
-    dispatch(metadataSetHasChanges(false));
-    dispatch(subtitleSetHasChanges(false));
-    dispatch(chapterSetHasChanges(false));
+    setUnsaved(AREAS, false);
 
     const result = await dispatch(postVideoInformation({
       segments: segments,
@@ -92,23 +113,23 @@ export const useSaveChanges = () => {
       subtitles: prepareSubtitles(subtitles),
       chapters: prepareSubtitles(chapters),
       metadata: metadata,
-      workflow: startWorkflow && selectedWorkflowId ? [{ id: selectedWorkflowId }] : undefined,
+      workflow: workflowId ? [{ id: workflowId }] : undefined,
+      changedAreas,
     }));
 
     if (postVideoInformation.fulfilled.match(result)) {
-      if (startWorkflow) {
+      // Opencast forgets the changes once it processes them
+      dispatch(workflowId ? clearChangedAreas() : addChangedAreas(unsavedAreas));
+      if (workflowId) {
         dispatch(setEnd(true));
       }
     } else {
       // Nothing was saved
-      if (videoChanged) { dispatch(videoSetHasChanges(true)); }
-      if (metadataChanged) { dispatch(metadataSetHasChanges(true)); }
-      if (subtitleChanged) { dispatch(subtitleSetHasChanges(true)); }
-      if (chapterChanged) { dispatch(chapterSetHasChanges(true)); }
+      setUnsaved(unsavedAreas, true);
     }
   };
 
-  return (startWorkflow: boolean) => {
-    void saveChanges(startWorkflow);
+  return (workflowId?: string) => {
+    void saveChanges(workflowId);
   };
 };

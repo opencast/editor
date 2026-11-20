@@ -7,6 +7,7 @@ import metadataReducer from "./metadataSlice";
 import subtitleReducer from "./subtitleSlice";
 import chapterReducer from "./chapterSlice";
 import thumbnailReducer from "./thumbnailSlice";
+import workflowSelectionReducer from "./workflowSelectionSlice";
 import hotkeyReducer from "./hotkeySlice";
 import errorReducer from "./errorSlice";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
@@ -22,6 +23,7 @@ const reducers = combineReducers({
   subtitleState: subtitleReducer,
   chapterState: chapterReducer,
   thumbnailState: thumbnailReducer,
+  workflowSelectionState: workflowSelectionReducer,
   hotkeyState: hotkeyReducer,
   errorState: errorReducer,
 });

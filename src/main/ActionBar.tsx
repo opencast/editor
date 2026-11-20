@@ -108,7 +108,7 @@ const SaveDraftButton: React.FC = () => {
       <ProtoButton
         aria-label={tooltip}
         aria-disabled={disabled}
-        onClick={() => !disabled && save(false)}
+        onClick={() => !disabled && save()}
         css={actionButtonStyle(theme)}
       >
         {isSaving ? <Spinner size={20} /> : <LuSave />}

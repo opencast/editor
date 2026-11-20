@@ -80,7 +80,12 @@ export interface PostEditArgument {
   chapters: SubtitlesFromOpencast[]
   workflow?: [{id: string}]
   metadata: Catalog[]
+  changedAreas: Area[]
 }
+
+// The areas of the editor in which the user can change something
+export const AREAS = ["cutting", "tracks", "thumbnails", "metadata", "subtitles", "chapters"] as const;
+export type Area = typeof AREAS[number];
 
 // Use respective i18n keys as values
 export enum MainMenuStateNames {

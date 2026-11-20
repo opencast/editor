@@ -109,7 +109,7 @@ const TrackSelection: React.FC = () => {
     }
 
     dispatch(setCustomizedTrackSelection(!customizedTrackSelection));
-    dispatch(setHasChanges(true));
+    dispatch(setHasChanges({ tracks: true }));
   };
 
   const isDisabledBecauseMoreThanTwoVideos = () => {
