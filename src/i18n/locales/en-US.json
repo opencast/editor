@@ -20,7 +20,12 @@
       "saved-text": "Changes saved.",
       "publish-button": "Publish",
       "publish-tooltip": "Save your changes and start processing the video",
-      "publish-title": "Publish"
+      "publish-title": "Publish",
+      "publish-automatic-republish-text": "Your changes do not require processing the video again. The published video is updated, which only takes a moment.",
+      "publish-automatic-process-text": "The video will be processed again to apply your changes. This can take a while.",
+      "publish-automatic-failed-text": "The last processing of this video failed. To be safe, the video will be processed again. This can take a while.",
+      "publish-manual-button": "Choose workflow manually",
+      "publish-automatic-button": "Use automatic selection"
     },
 
     "cuttingActions": {

@@ -20,7 +20,12 @@
       "saved-text": "Änderungen gespeichert.",
       "publish-button": "Veröffentlichen",
       "publish-tooltip": "Speichert die Änderungen und startet die Verarbeitung des Videos",
-      "publish-title": "Veröffentlichen"
+      "publish-title": "Veröffentlichen",
+      "publish-automatic-republish-text": "Ihre Änderungen erfordern keine erneute Verarbeitung des Videos. Das veröffentlichte Video wird aktualisiert, was nur einen Moment dauert.",
+      "publish-automatic-process-text": "Das Video wird erneut verarbeitet, um Ihre Änderungen zu übernehmen. Dies kann eine Weile dauern.",
+      "publish-automatic-failed-text": "Die letzte Verarbeitung dieses Videos ist fehlgeschlagen. Zur Sicherheit wird das Video erneut verarbeitet. Dies kann eine Weile dauern.",
+      "publish-manual-button": "Workflow manuell wählen",
+      "publish-automatic-button": "Automatische Auswahl verwenden"
     },
     "cuttingActions": {
       "cut-button": "Schneiden",

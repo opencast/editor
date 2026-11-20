@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 import { css } from "@emotion/react";
 import { LuMonitorUp } from "react-icons/lu";
@@ -9,13 +9,18 @@ import { ErrorBox, Modal, ModalHandle, ProtoButton, Spinner } from "@opencast/ap
 import { useAppDispatch, useAppSelector } from "../redux/store";
 import { selectSelectedWorkflowId, selectWorkflows, setSelectedWorkflowIndex } from "../redux/videoSlice";
 import { selectError, selectStatus } from "../redux/workflowPostSlice";
+import { selectLastWorkflowFailed } from "../redux/workflowSelectionSlice";
+import { settings } from "../config";
 import { actionButtonStyle } from "../cssStyles";
 import { useTheme } from "../themes";
-import { useSaveChanges } from "../util/useSaveChanges";
+import { COLORS } from "../util/appkit";
+import { useChangedAreas, useSaveChanges } from "../util/useSaveChanges";
+import { chooseWorkflow, WorkflowReason } from "../util/workflowSelection";
 import { Workflow } from "../types";
 
 /**
- * A modal for starting the processing of the video. Lets the user select a workflow, if there is more than one.
+ * A modal for starting the processing of the video.
+ * Depending on the settings, the workflow is chosen based on the changes, or the user selects it.
  */
 const PublishModal: React.FC<{
   modalRef: React.RefObject<ModalHandle | null>,
@@ -55,6 +60,13 @@ const PublishContent: React.FC<{
   const workflows = [...useAppSelector(selectWorkflows)].sort((a, b) => b.displayOrder - a.displayOrder);
   const selectedWorkflowId = useAppSelector(selectSelectedWorkflowId);
 
+  // The user can choose to select the workflow themselves, even if it could be chosen automatically
+  const canChooseAutomatically = settings.workflow.automaticWorkflowSelection;
+  const [manual, setManual] = useState(false);
+  const automatic = canChooseAutomatically && !manual;
+  const automaticChoice = useAutomaticWorkflow();
+  const workflowId = automatic ? automaticChoice.workflowId : selectedWorkflowId;
+
   useEffect(() => {
     if (workflows.length >= 1) {
       dispatch(setSelectedWorkflowIndex(workflows[0].id));
@@ -69,14 +81,33 @@ const PublishContent: React.FC<{
     maxWidth: "500px",
   });
 
+  const footerStyle = css({
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    gap: "12px",
+  });
+
   const buttonsStyle = css({
     display: "flex",
     justifyContent: "flex-end",
     gap: "12px",
   });
 
+  // Not meant to stand out. Most users should not need it.
+  // Uses a fixed color instead of opacity, which would reduce the contrast in high contrast modes.
+  // Appkit makes this color fully contrasting there.
+  const switchStyle = css({
+    fontSize: "14px",
+    color: COLORS.neutral60,
+    textDecoration: "underline",
+    "&:hover": { color: theme.text },
+  });
+
   const text = () => {
-    if (workflows.length <= 0) {
+    if (automatic) {
+      return t(automaticTextKeys[automaticChoice.reason]);
+    } else if (workflows.length <= 0) {
       return (
         <Trans i18nKey="workflowSelection.noWorkflows-text">
           There are no workflows to process your changes with.<br />
@@ -99,7 +130,7 @@ const PublishContent: React.FC<{
   return (
     <div css={contentStyle}>
       <div>{text()}</div>
-      {workflows.length > 1 &&
+      {!automatic && workflows.length > 1 &&
         <RadioGroup
           css={{ gap: "12px" }}
           defaultValue={workflows[0].id}
@@ -119,27 +150,54 @@ const PublishContent: React.FC<{
           </span>
         </ErrorBox>
       }
-      <div css={buttonsStyle}>
-        <ProtoButton
-          aria-disabled={isSaving}
-          onClick={() => !isSaving && modalRef.current?.close?.()}
-          css={actionButtonStyle(theme)}
-        >
-          {t("modal.cancel")}
-        </ProtoButton>
-        {workflows.length > 0 &&
+      <div css={footerStyle}>
+        {canChooseAutomatically
+          ? <ProtoButton
+            aria-disabled={isSaving}
+            onClick={() => !isSaving && setManual(!manual)}
+            css={switchStyle}
+          >
+            {t(manual ? "actionBar.publish-automatic-button" : "actionBar.publish-manual-button")}
+          </ProtoButton>
+          : <span />
+        }
+        <div css={buttonsStyle}>
           <ProtoButton
             aria-disabled={isSaving}
-            onClick={() => !isSaving && selectedWorkflowId && save(selectedWorkflowId)}
-            css={actionButtonStyle(theme, true)}
+            onClick={() => !isSaving && modalRef.current?.close?.()}
+            css={actionButtonStyle(theme)}
           >
-            {isSaving ? <Spinner size={20} /> : <LuMonitorUp />}
-            <span>{t("actionBar.publish-button")}</span>
+            {t("modal.cancel")}
           </ProtoButton>
-        }
+          {(automatic || workflows.length > 0) &&
+            <ProtoButton
+              aria-disabled={isSaving}
+              onClick={() => !isSaving && workflowId && save(workflowId)}
+              css={actionButtonStyle(theme, true)}
+            >
+              {isSaving ? <Spinner size={20} /> : <LuMonitorUp />}
+              <span>{t("actionBar.publish-button")}</span>
+            </ProtoButton>
+          }
+        </div>
       </div>
     </div>
   );
+};
+
+const automaticTextKeys = {
+  republish: "actionBar.publish-automatic-republish-text",
+  process: "actionBar.publish-automatic-process-text",
+  failed: "actionBar.publish-automatic-failed-text",
+} as const satisfies Record<WorkflowReason, string>;
+
+/**
+ * The workflow that fits the changes the user made best
+ */
+const useAutomaticWorkflow = () => {
+  const changedAreas = useChangedAreas();
+  const lastWorkflowFailed = useAppSelector(selectLastWorkflowFailed);
+  return chooseWorkflow(changedAreas, lastWorkflowFailed, settings.workflow);
 };
 
 const WorkflowOption: React.FC<{ workflow: Workflow }> = ({ workflow }) => {
