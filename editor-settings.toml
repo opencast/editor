@@ -185,6 +185,45 @@ spanish = { lang = "es" }
 #simpleMode = false
 
 
+####
+# Workflow Selection
+##
+
+[workflow]
+
+# Choose the workflow that starts when the user clicks "Publish" automatically,
+# based on what was changed. If turned off, the user picks the workflow.
+#
+# Changes that only touch the areas in `republishAreas` get the
+# `republishWorkflow`. This should be a fast workflow that only updates what was
+# already published. All other changes get the `publishWorkflow`, which should
+# process the video again. If nothing was changed, or if the last workflow on
+# the event failed, the `publishWorkflow` is used to be safe.
+#
+# Opencast remembers what was changed between editing sessions. This needs a
+# version of Opencast that sends `changed_areas` and `last_workflow_failed`.
+# Type: boolean
+# Default: false
+#automaticWorkflowSelection = false
+
+# Id of the workflow for changes that do not need the video to be processed again
+# Type: string
+# Default: "republish-fast"
+#republishWorkflow = "republish-fast"
+
+# Id of the workflow for all other changes
+# Type: string
+# Default: "publish"
+#publishWorkflow = "publish"
+
+# The areas that `republishWorkflow` can handle. If only these areas were
+# changed, `republishWorkflow` is used.
+# Possible values: "cutting", "tracks", "thumbnails", "metadata", "subtitles", "chapters"
+# Type: string[]
+# Default: ["metadata", "thumbnails", "subtitles", "chapters"]
+#republishAreas = ["metadata", "thumbnails", "subtitles", "chapters"]
+
+
 
 ############################################################
 # Settings for demo deployment

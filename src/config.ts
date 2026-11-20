@@ -14,7 +14,7 @@
  */
 import { parse } from "smol-toml";
 import deepmerge from "deepmerge";
-import { Flavor } from "./types";
+import { Area, Flavor } from "./types";
 
 /**
  * Local constants
@@ -38,6 +38,16 @@ export interface subtitleTags {
   "auto-generated": string,
   "auto-generator": string,
   type: string,
+}
+
+/**
+ * Settings for choosing the workflow that processes the changes
+ */
+export interface WorkflowSettings {
+  automaticWorkflowSelection: boolean,
+  republishWorkflow: string,
+  publishWorkflow: string,
+  republishAreas: Area[],
 }
 
 /**
@@ -67,6 +77,7 @@ interface iSettings {
     show: boolean,
     simpleMode: boolean,
   },
+  workflow: WorkflowSettings,
   subtitles: {
     show: boolean,
     mainFlavor: string,
@@ -112,6 +123,12 @@ const defaultSettings: iSettings = {
   thumbnail: {
     show: false,
     simpleMode: false,
+  },
+  workflow: {
+    automaticWorkflowSelection: false,
+    republishWorkflow: "republish-fast",
+    publishWorkflow: "publish",
+    republishAreas: ["metadata", "thumbnails", "subtitles", "chapters"],
   },
   subtitles: {
     show: false,
@@ -432,6 +449,12 @@ const SCHEMA = {
   thumbnail: {
     show: types.boolean,
     simpleMode: types.boolean,
+  },
+  workflow: {
+    automaticWorkflowSelection: types.boolean,
+    republishWorkflow: types.string,
+    publishWorkflow: types.string,
+    republishAreas: types.array,
   },
 };
 

@@ -51,3 +51,6 @@ show = true
 
 [chapters]
 show = true
+
+[workflow]
+automaticWorkflowSelection = true
