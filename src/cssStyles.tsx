@@ -8,6 +8,7 @@ import { createTheme } from "@mui/material/styles";
 import { Theme, useTheme } from "./themes";
 import {
   DEFAULT_CONFIG as APPKIT_CONFIG,
+  screenWidthAtMost,
 } from "@opencast/appkit";
 import { StylesConfig } from "react-select";
 
@@ -433,7 +434,7 @@ export const checkboxStyle = (theme: Theme) => css({
 });
 
 export const undisplay = (maxWidth: number) => css({
-  [`@media (max-width: ${maxWidth}px)`]: {
+  [screenWidthAtMost(maxWidth)]: {
     display: "none",
   },
 });
