@@ -27,9 +27,6 @@ export interface Theme {
   menuBorder: string;
   boxShadow: string;
   boxShadow_tiles: string;
-  singleKey_bg: string;
-  singleKey_border: string;
-  singleKey_boxShadow: string;
   invert_wave: string;
   inverted_text: string;
   tooltip: string;
@@ -85,9 +82,6 @@ export const lightMode: Theme = {
   menuBorder: `1px solid ${COLORS.neutral30}`,
   boxShadow: `0 0 2px 2px ${COLORS.neutral30}`,
   boxShadow_tiles: "0 5px 10px 0px rgba(150, 150, 150, 0.5)",
-  singleKey_bg: COLORS.neutral10,
-  singleKey_border: COLORS.neutral20,
-  singleKey_boxShadow: "0 2px 2px 0px rgba(150, 150, 150, 0.2)",
   invert_wave: "invert(0%)",
   // for "Generating waveform" text: in lightMode it"s not inverted, so it has to be black
   inverted_text: COLORS.neutral90,
@@ -148,9 +142,6 @@ export const darkMode: Theme = {
   menuBorder: `1px solid ${COLORS.neutral30}`,
   boxShadow: `0 0 5px ${COLORS.neutral05}`,
   boxShadow_tiles: "0 5px 10px 0px rgba(0, 0, 0, 0.3)",
-  singleKey_bg: "linear-gradient(180deg, rgba(40,40,40,1) 0%, rgba(30,30,30,1) 100%)",
-  singleKey_border: COLORS.neutral20,
-  singleKey_boxShadow: "0 2px 2px 0px rgba(0, 0, 0, 1.0)",
   invert_wave: "invert(100%)",
   inverted_text: COLORS.neutral90,
   tooltip: COLORS.neutral80,
@@ -209,9 +200,6 @@ export const highContrastDarkMode: Theme = {
   menuBorder: "2px solid #fff",
   boxShadow: "0 0 0 rgba(255, 255, 255, 0.3)",
   boxShadow_tiles: "0 0 0 rgba(255, 255, 255, 0.3)",
-  singleKey_bg: "none",
-  singleKey_border: "#fff",
-  singleKey_boxShadow: "0 2px 2px 0px rgba(150, 150, 150, 0.2)",
   invert_wave: "invert(100%)",
   inverted_text: "#000",
   tooltip: "#fff",
@@ -268,9 +256,6 @@ export const highContrastLightMode: Theme = {
   menuBorder: "2px solid #000",
   boxShadow: "0 0 0 rgba(0, 0, 0, 0.3)",
   boxShadow_tiles: "0 0 0 rgba(0, 0, 0, 0.3)",
-  singleKey_bg: "none",
-  singleKey_border: "#000",
-  singleKey_boxShadow: "0 2px 2px 0px rgba(150, 150, 150, 0.2)",
   invert_wave: "invert(0%)",
   inverted_text: "#fff",
   tooltip: "#000",

@@ -91,7 +91,6 @@ export enum MainMenuStateNames {
   chapters = "mainMenu.chapters-button",
   thumbnail = "mainMenu.thumbnail-button",
   finish = "mainMenu.finish-button",
-  keyboardControls = "mainMenu.keyboard-controls-button",
 }
 
 export interface httpRequestState {
