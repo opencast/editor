@@ -554,7 +554,6 @@ export const SegmentsList: React.FC<{
                 borderStyle: styleByActiveSegment ? (activeSegmentIndex === index ? "dashed" : "solid") : "solid",
                 borderColor: "white",
                 borderWidth: "1px",
-                boxSizing: "border-box",
                 width: ((segment.end - segment.start) / duration) * 100 + "%",
                 height: timelineHeight + "px",     // CHECK IF 100%
                 zIndex: 1,
@@ -736,6 +735,8 @@ export const Waveforms: React.FC<{ timelineHeight: number; topOffset?: number }>
   const [waveformWorkerError, setWaveformWorkerError] = useState<boolean>(false);
 
   const waveformDisplayTestStyle = css({
+    // The height excludes the top offset
+    boxSizing: "content-box",
     display: "flex",
     flexDirection: "column",
     position: "absolute" as const,
