@@ -65,6 +65,9 @@ jobs:
       - name: Run npm ci
         run: npm ci
 
+      - name: Execute Vitest tests
+        run: npm run test
+
       - name: Build the app
         run: |
           # This set the editor's datasource to the relevant test server
@@ -76,11 +79,6 @@ jobs:
           SERVER: ${{needs.detect-repo-owner.outputs.server}}
           PUBLIC_URL: ${{needs.detect-repo-owner.outputs.branch}}
           VITE_APP_SETTINGS_PATH: editor-settings.toml
-
-      # tests are currently failing
-      #- run: npm test
-      #  env:
-      #    CI: true
 
       - name: Prepare git
         run: |
