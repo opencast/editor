@@ -127,6 +127,8 @@ const SubtitleListEditor: React.FC<{
   const listStyle = css({
     flex: "auto",
     overflow: "auto",
+    position: "relative",
+    minHeight: 0,
   });
 
   const itemData = createItemData(subtitle?.cues, subtitleId, defaultSegmentLength);
@@ -180,7 +182,7 @@ const SubtitleListEditor: React.FC<{
 
   return (
     <div css={listStyle}>
-      <AutoSizer renderProp={
+      <AutoSizer style={{ position: "absolute", inset: 0 }} renderProp={
         ({ height = 600, width = 800 }) => {
           return <List
             style={{ height, width }}
