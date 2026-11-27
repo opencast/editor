@@ -303,79 +303,17 @@ export const VideoPlayer = React.forwardRef<VideoPlayerForwardRef, VideoPlayerPr
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [url]);
 
-    // Trigger a workaround for subtitles not being displayed in the video in Firefox
+    // Show an image when there is no video stream.
+    // ReactPlayer does not offer a poster option, so it is set on the video element directly.
     useEffect(() => {
-      // Only trigger workaround in Firefox, as it will cause issues in Chrome
-      /* eslint-disable-next-line @typescript-eslint/ban-ts-comment */
-      // @ts-ignore
-      if (typeof InstallTrigger !== "undefined") {
-        reAddTrack();
+      if (ref.current && ready) {
+        if (audioOnly) {
+          ref.current.poster = VideoOffImage;
+        } else {
+          ref.current.removeAttribute("poster");
+        }
       }
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [subtitleUrl]);
-
-    const playerConfig = {
-      file: {
-        attributes: {
-          // Skip player when navigating page with keyboard
-          tabIndex: "-1",
-          crossOrigin: "anonymous",    // allow thumbnail generation
-          poster: audioOnly && VideoOffImage, // Show image when there is no video stream
-        },
-        tracks: [
-          { kind: "subtitles", src: subtitleUrl, srcLang: "en", default: true, label: "I am irrelevant" },
-        ],
-      },
-    };
-
-    /**
-     * Workaround for subtitles not appearing in Firefox (or only appearing on inital mount, then disappearing
-     * when changed). Removes old tracks and readds them, because letting React to it does not seem
-     * to work properly.
-     * Fairly hacky, currently only works for a page with only one video
-     * https://github.com/CookPete/react-player/issues/490
-     */
-    function reAddTrack() {
-      const video = document.querySelector("video");
-
-      if (video) {
-        const oldTracks = video.querySelectorAll("track");
-        oldTracks.forEach(oldTrack => {
-          video.removeChild(oldTrack);
-        });
-      }
-
-      if (playerConfig && playerConfig.file && playerConfig.file.tracks) {
-        playerConfig.file.tracks.map((t, trackIdx) => {
-          const track = document.createElement("track");
-          track.kind = t.kind!;
-          track.label = t.label!;
-          track.srclang = t.srcLang!;
-          track.default = t.default!;
-          track.src = t.src!;
-          track.track.mode = "showing";    // Because the load callback may sometimes not execute properly
-          track.addEventListener("error", (_e: Event) => {
-            console.warn(`Cannot load track ${t.src}`);
-          });
-          track.addEventListener("load", (e: Event) => {
-            const textTrack = e.currentTarget as HTMLTrackElement;
-            if (textTrack) {
-              if (t.default === true) {
-                textTrack.track.mode = "showing";
-                video!.textTracks[trackIdx].mode = "showing"; // thanks Firefox
-              } else {
-                textTrack.track.mode = "hidden";
-                video!.textTracks[trackIdx].mode = "hidden"; // thanks Firefox
-              }
-            }
-          });
-          const video = document.querySelector("video");
-          if (video) {
-            video.appendChild(track);
-          }
-        });
-      }
-    }
+    }, [audioOnly, ready]);
 
     // External functions
     useImperativeHandle(forwardRefThing, () => ({
@@ -462,9 +400,20 @@ export const VideoPlayer = React.forwardRef<VideoPlayerForwardRef, VideoPlayerPr
               tabIndex={-1} // Skip player when navigating page with keyboard
               crossOrigin="anonymous" // allow thumbnail generation
               disablePictureInPicture={true}
-              // @ts-expect-error: The Config type does match what we need
-              config={playerConfig}
-            />
+            >
+              {subtitleUrl && (
+                // Keyed, because browsers do not reload the subtitles when only the source changes
+                <track
+                  key={subtitleUrl}
+                  kind="subtitles"
+                  src={subtitleUrl}
+                  srcLang="en"
+                  label="Subtitles"
+                  default
+                  ref={element => { if (element) { element.track.mode = "showing"; } }}
+                />
+              )}
+            </ReactPlayer>
           </div>
         );
       } else {
