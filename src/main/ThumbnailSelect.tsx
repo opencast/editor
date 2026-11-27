@@ -512,7 +512,8 @@ const WorkaroundThumbnailGenerator: React.FC<{
   }, [dispatch, ready, seeked, track]);
 
   const playerStyle = css({
-    display: "none",
+    // The player sets `display: block` inline, which would otherwise win
+    display: "none !important",
   });
 
   if (!thumbnailTrack) {
