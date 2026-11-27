@@ -169,6 +169,7 @@ const Chapter: React.FC = () => {
               setFocusToSegmentBelowId={setFocusToSegmentBelowId}
             />
             <SubtitleVideoArea
+              showAllVideosByDefault={true}
               selectIsPlaying={selectIsPlaying}
               selectCurrentlyAt={selectCurrentlyAt}
               selectCurrentlyAtInSeconds={selectCurrentlyAtInSeconds}

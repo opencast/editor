@@ -47,6 +47,8 @@ export const postVideoInformation =
         subtitles: argument.subtitles,
         chapters: argument.chapters,
         workflows: argument.workflow,
+        // eslint-disable-next-line camelcase
+        changed_areas: argument.changedAreas,
         metadataJSON: JSON.stringify(catalogsJson),
       },
     );
@@ -61,9 +63,6 @@ const workflowPostSlice = createSlice({
   name: "workflowPostState",
   initialState,
   reducers: {
-    resetPostRequestState: state => {
-      state.status = "idle";
-    },
     setPostRequestError: (state, action: PayloadAction<httpRequestState["error"]>) => {
       state.status = "failed";
       state.error = action.payload;
@@ -114,7 +113,7 @@ export const convertSegments = (segments: Segment[]) => {
   return newSegments;
 };
 
-export const { resetPostRequestState, setPostRequestError } = workflowPostSlice.actions;
+export const { setPostRequestError } = workflowPostSlice.actions;
 
 export const { selectStatus, selectError } = workflowPostSlice.selectors;
 

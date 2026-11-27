@@ -6,7 +6,8 @@ const config: PlaywrightTestConfig = {
     [process.env.CI ? 'github' : 'list'],
     ['html', { outputFolder: 'playwright-report' }],
   ],
-  testIgnore: '**/redux/**',
+  // Unit tests are run by vitest
+  testIgnore: ['**/redux/**', '**/__tests__/**'],
   retries: 1,
   timeout: 60 * 1000,
 

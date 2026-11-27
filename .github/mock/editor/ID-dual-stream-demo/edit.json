@@ -1,5 +1,7 @@
 {
   "segments": [],
+  "changed_areas": [],
+  "last_workflow_failed": false,
   "workflows": [
     {
       "id": "publish",

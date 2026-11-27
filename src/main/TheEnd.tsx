@@ -2,16 +2,13 @@ import React from "react";
 
 import { css } from "@emotion/react";
 
-import { LuCircleCheck, LuCircleX } from "react-icons/lu";
+import { LuCircleCheck, LuDoorOpen } from "react-icons/lu";
 
-import { useAppSelector } from "../redux/store";
-import { selectEndState } from "../redux/endSlice";
 import { basicButtonStyle, navigationButtonStyle } from "../cssStyles";
 
 import { useTranslation } from "react-i18next";
 import { useTheme } from "../themes";
-import { ThemedTooltip } from "./Tooltip";
-import { CallbackButton } from "./Finish";
+import { settings } from "../config";
 import { ProtoButton } from "@opencast/appkit";
 
 /**
@@ -21,17 +18,6 @@ import { ProtoButton } from "@opencast/appkit";
 const TheEnd: React.FC = () => {
 
   const { t } = useTranslation();
-
-  // Init redux variables
-  const endState = useAppSelector(selectEndState);
-
-  const text = () => {
-    if (endState === "discarded") {
-      return t("theEnd.discarded-text");
-    } else if (endState === "success") {
-      return t("theEnd.info-text");
-    }
-  };
 
   const theEndStyle = css({
     width: "100%",
@@ -43,43 +29,45 @@ const TheEnd: React.FC = () => {
     gap: "20px",
   });
 
-  const restartOrBackStyle = css({
-    display: "flex",
-    flexDirection: "row",
-    gap: "20px",
-  });
-
   return (
     <div css={theEndStyle}>
-      {endState === "discarded" ? <LuCircleX css={{ fontSize: 80 }} /> : <LuCircleCheck css={{ fontSize: 80 }} />}
-      <div>{text()}</div>
-      <div css={restartOrBackStyle}>
-        <CallbackButton />
-        {(endState === "discarded") && <StartOverButton />}
-      </div>
+      <LuCircleCheck css={{ fontSize: 80 }} />
+      <div>{t("theEnd.info-text")}</div>
+      <CallbackButton />
     </div>
   );
 };
 
-
-const StartOverButton: React.FC = () => {
+/**
+ * Takes you back to the callback url resource
+ */
+const CallbackButton: React.FC = () => {
 
   const { t } = useTranslation();
+
   const theme = useTheme();
 
-  const reloadPage = () => {
-    window.location.reload();
+  const openCallbackUrl = () => {
+    window.open(settings.callbackUrl, "_self");
   };
 
   return (
-    <ThemedTooltip title={t("theEnd.startOver-tooltip")}>
-      <ProtoButton
-        onClick={reloadPage}
-        css={[basicButtonStyle(theme), navigationButtonStyle(theme)]}
-      >
-        <span>{t("theEnd.startOver-button")}</span>
-      </ProtoButton>
-    </ThemedTooltip>
+    <>
+      {settings.callbackUrl !== undefined &&
+        <ProtoButton
+          onClick={openCallbackUrl}
+          css={[basicButtonStyle(theme), navigationButtonStyle(theme)]}
+        >
+          <LuDoorOpen />
+          <span>
+            {settings.callbackSystem ?
+              t("various.callback-button-system", { system: settings.callbackSystem }) :
+              t("various.callback-button-generic")
+            }
+          </span>
+        </ProtoButton>
+      }
+    </>
   );
 };
 

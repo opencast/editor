@@ -41,6 +41,8 @@ export interface Theme {
   menuButton_outline: string;
   button_outline: string;
   button_color: string;
+  accent_color: string;
+  accent_bg: string;
   indicator_color: string;
   icon_color: string;
   slider_thumb_color: string;
@@ -100,6 +102,8 @@ export const lightMode: Theme = {
   menuButton_outline: "2px solid transparent",
   button_outline: "none",
   button_color: COLORS.neutral10,
+  accent_color: COLORS.accent7,
+  accent_bg: `color-mix(in srgb, ${COLORS.accent7} 15%, ${COLORS.neutral10})`,
   indicator_color: COLORS.neutral60,
   icon_color: COLORS.neutral05,
   slider_thumb_color: COLORS.neutral70,
@@ -162,6 +166,8 @@ export const darkMode: Theme = {
   menuButton_outline: "2px solid transparent",
   button_outline: "0px solid transparent",
   button_color: COLORS.neutral20,
+  accent_color: COLORS.accent7,
+  accent_bg: `color-mix(in srgb, ${COLORS.accent7} 15%, ${COLORS.neutral10})`,
   indicator_color: COLORS.neutral60,
   icon_color: "rgba(255, 255, 255, 0.87)",
   slider_thumb_color: COLORS.neutral70,
@@ -223,6 +229,8 @@ export const highContrastDarkMode: Theme = {
   menuButton_outline: "2px solid transparent",
   button_outline: "2px solid #a6ffea",
   button_color: "#a6ffea",
+  accent_color: COLORS.accent7,
+  accent_bg: "#000",
   indicator_color: "#a6ffea",
   icon_color: "#000",
   slider_thumb_color: "#fff",
@@ -282,6 +290,8 @@ export const highContrastLightMode: Theme = {
   menuButton_outline: "2px solid transparent",
   button_outline: "3px solid #000099",
   button_color: "#000099",
+  accent_color: COLORS.accent7,
+  accent_bg: "snow",
   indicator_color: "#000099",
   icon_color: "#fff",
   slider_thumb_color: "#000",

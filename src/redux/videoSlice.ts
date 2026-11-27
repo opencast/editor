@@ -2,7 +2,7 @@ import { clamp } from "lodash-es";
 import { createSlice, nanoid, PayloadAction } from "@reduxjs/toolkit";
 import { client } from "../util/client";
 
-import { Segment, httpRequestState, Track, Workflow, SubtitlesFromOpencast } from "../types";
+import { Area, Segment, httpRequestState, Track, Workflow, SubtitlesFromOpencast } from "../types";
 import { roundToDecimalPlace } from "../util/utilityFunctions";
 import { settings } from "../config";
 import { createAppAsyncThunk } from "./createAsyncThunkWithTypes";
@@ -24,7 +24,7 @@ export interface video {
   activeSegmentIndex: number,     // Index of the segment that is currenlty hovered
   selectedWorkflowId: string,     // Id of the currently selected workflow
   aspectRatios: { width: number, height: number; }[],  // Aspect ratios of every video
-  hasChanges: boolean,            // Did user make changes in cutting view since last save
+  hasChanges: { cutting: boolean, tracks: boolean, thumbnails: boolean },  // Did user make changes since last save
   timelineZoom: number,           // Zoom multiplicator for the timeline,
   waveformImages: string[];
   originalThumbnails: { id: Track["id"], uri: Track["thumbnailUri"], time: Track["thumbnailTime"]; }[];
@@ -64,7 +64,7 @@ export const initialState: video & httpRequestState = {
   clickTriggered: false,
   jumpTriggered: false,
   aspectRatios: [],
-  hasChanges: false,
+  hasChanges: { cutting: false, tracks: false, thumbnails: false },
   timelineZoom: 0,
   waveformImages: [],
   originalThumbnails: [],
@@ -103,6 +103,8 @@ type FetchVideoInformation = {
   chapters:video["subtitlesFromOpencast"],
   local: boolean,
   customizedTrackSelection: boolean, // TODO: Figure out if this still exists
+  changed_areas?: Area[],           // Areas changed since the last publish. Missing if Opencast does not know them
+  last_workflow_failed?: boolean,   // Did the last workflow that ran on this event fail?
 }
 
 export const fetchVideoInformation = createAppAsyncThunk("video/fetchVideoInformation", async () => {
@@ -144,7 +146,7 @@ const videoSlice = createSlice({
           track.video_stream.enabled = action.payload.enabled;
         }
       }
-      state.hasChanges = true;
+      state.hasChanges.tracks = true;
     },
     setAudioEnabled: (state, action: PayloadAction<{trackId: string, enabled: boolean}>) => {
       for (const track of state.tracks) {
@@ -152,7 +154,7 @@ const videoSlice = createSlice({
           track.audio_stream.enabled = action.payload.enabled;
         }
       }
-      state.hasChanges = true;
+      state.hasChanges.tracks = true;
     },
     setIsPlaying: (state, action: PayloadAction<video["isPlaying"]>) => {
       state.isPlaying = action.payload;
@@ -221,8 +223,8 @@ const videoSlice = createSlice({
     setAspectRatio: (state, action: PayloadAction<{ dataKey: number; } & { width: number, height: number; }>) => {
       state.aspectRatios[action.payload.dataKey] = { width: action.payload.width, height: action.payload.height };
     },
-    setHasChanges: (state, action: PayloadAction<video["hasChanges"]>) => {
-      state.hasChanges = action.payload;
+    setHasChanges: (state, action: PayloadAction<Partial<video["hasChanges"]>>) => {
+      Object.assign(state.hasChanges, action.payload);
     },
     setTimelineZoom: (state, action: PayloadAction<video["timelineZoom"]>) => {
       state.timelineZoom = clamp(action.payload, 0, 1);
@@ -277,7 +279,7 @@ const videoSlice = createSlice({
       // Add the new segments and remove the old one
       state.segments.splice(state.activeSegmentIndex, 1, segmentA, segmentB);
 
-      state.hasChanges = true;
+      state.hasChanges.cutting = true;
     },
     moveCut: (
       state,
@@ -294,41 +296,41 @@ const videoSlice = createSlice({
       // Merge overlapping left cut
       if (time <= state.segments[leftSegmentIndex].start) {
         mergeSegments(state, rightSegmentIndex, leftSegmentIndex);
-        state.hasChanges = true;
+        state.hasChanges.cutting = true;
         return;
       }
 
       // Merge overlapping right cut
       if (time >= state.segments[rightSegmentIndex].end) {
         mergeSegments(state, leftSegmentIndex, rightSegmentIndex);
-        state.hasChanges = true;
+        state.hasChanges.cutting = true;
         return;
       }
 
       // Move segment edges
       state.segments[leftSegmentIndex].end = time;
       state.segments[rightSegmentIndex].start = time;
-      state.hasChanges = true;
+      state.hasChanges.cutting = true;
     },
     markAsDeletedOrAlive: state => {
       state.segments[state.activeSegmentIndex].deleted = !state.segments[state.activeSegmentIndex].deleted;
-      state.hasChanges = true;
+      state.hasChanges.cutting = true;
     },
     setSelectedWorkflowIndex: (state, action: PayloadAction<video["selectedWorkflowId"]>) => {
       state.selectedWorkflowId = action.payload;
     },
     mergeLeft: state => {
       mergeSegments(state, state.activeSegmentIndex, state.activeSegmentIndex - 1);
-      state.hasChanges = true;
+      state.hasChanges.cutting = true;
     },
     mergeRight: state => {
       mergeSegments(state, state.activeSegmentIndex, state.activeSegmentIndex + 1);
-      state.hasChanges = true;
+      state.hasChanges.cutting = true;
     },
     mergeAll: state => {
       mergeSegments(state, state.activeSegmentIndex, 0);
       mergeSegments(state, state.activeSegmentIndex, state.segments.length - 1);
-      state.hasChanges = true;
+      state.hasChanges.cutting = true;
     },
     setCustomizedTrackSelection: (state, action: PayloadAction<video["customizedTrackSelection"]>) => {
       state.customizedTrackSelection = action.payload;
@@ -414,7 +416,8 @@ const videoSlice = createSlice({
     selectActiveSegmentIndex: state => state.activeSegmentIndex,
     selectIsCurrentSegmentAlive: state => !state.segments[state.activeSegmentIndex].deleted,
     selectSelectedWorkflowId: state => state.selectedWorkflowId,
-    selectHasChanges: state => state.hasChanges,
+    selectHasChanges: state => Object.values(state.hasChanges).some(changed => changed),
+    selectUnsavedAreas: state => state.hasChanges,
     selectTimelineZoom: state => state.timelineZoom,
     selectWaveformImages: state => state.waveformImages,
     selectOriginalThumbnails: state => state.originalThumbnails,
@@ -642,6 +645,7 @@ export const {
   selectIsCurrentSegmentAlive,
   selectSelectedWorkflowId,
   selectHasChanges,
+  selectUnsavedAreas,
   selectTimelineZoom,
   selectWaveformImages,
   selectOriginalThumbnails,

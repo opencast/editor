@@ -1,59 +1,76 @@
 {
     "mainMenu": {
       "cutting-button": "Cutting",
-      "finish-button": "Finish",
       "select-tracks-button": "Tracks",
       "subtitles-button": "Subtitles",
       "chapters-button": "Chapters",
       "thumbnail-button": "Thumbnail",
       "metadata-button": "Metadata",
       "keyboard-controls-button": "Keyboard Controls",
-      "tooltip-aria": "Main Navigation"
+      "tooltip-aria": "Main Navigation",
+      "collapse-tooltip": "Collapse navigation",
+      "expand-tooltip": "Expand navigation"
+    },
+
+    "actionBar": {
+      "tooltip-aria": "Actions",
+      "save-button": "Save draft",
+      "save-tooltip": "Save your changes without processing the video. You can continue your edit later.",
+      "save-nothing-tooltip": "There are no unsaved changes",
+      "saved-text": "Changes saved.",
+      "publish-button": "Publish",
+      "publish-tooltip": "Save your changes and start processing the video",
+      "publish-title": "Publish",
+      "publish-automatic-republish-text": "Your changes do not require processing the video again. The published video is updated, which only takes a moment.",
+      "publish-automatic-process-text": "The video will be processed again to apply your changes. This can take a while.",
+      "publish-automatic-failed-text": "The last processing of this video failed. To be safe, the video will be processed again. This can take a while.",
+      "publish-manual-button": "Choose workflow manually",
+      "publish-automatic-button": "Use automatic selection"
     },
 
     "cuttingActions": {
       "cut-button": "Cut",
-      "cut-tooltip": "Split the segment at the current timeline marker position.\n Hotkey: {{hotkeyName}}",
-      "cut-tooltip-aria": "Cut. Split the segment at the current timeline marker position.\n Hotkey: {{hotkeyName}}.",
+      "cut-tooltip": "Split the segment at the current timeline marker position.\n Shortcut: {{hotkeyName}}",
+      "cut-tooltip-aria": "Cut. Split the segment at the current timeline marker position.\n Shortcut: {{hotkeyName}}.",
       "add-button": "Add",
-      "add-tooltip": "Add a segment at the current timeline marker position.\n Hotkey: {{hotkeyName}}",
-      "add-tooltip-aria": "Add. Add a segment at the current timeline marker position.\n Hotkey: {{hotkeyName}}.",
+      "add-tooltip": "Add a chapter at the current timeline marker position.\n Shortcut: {{hotkeyName}}",
+      "add-tooltip-aria": "Add. Add a chapter at the current timeline marker position.\n Shortcut: {{hotkeyName}}.",
       "delete-button": "Delete",
-      "delete-restore-tooltip": "Mark or unmark the segment at the current position as to be deleted.\n Hotkey: {{hotkeyName}}",
-      "delete-restore-tooltip-aria": "Delete and Restore. Mark or unmark the segment at the current position as to be deleted.\n Hotkey: {{hotkeyName}}.",
-      "deleteByMerge-tooltip": "Remove the segment at the current position.\n Hotkey: {{hotkeyName}}",
-      "deleteByMerge-tooltip-aria": "Remove the segment at the current position.\n Hotkey: {{hotkeyName}}.",
+      "delete-restore-tooltip": "Mark or unmark the segment at the current position as to be deleted.\n Shortcut: {{hotkeyName}}",
+      "delete-restore-tooltip-aria": "Delete and Restore. Mark or unmark the segment at the current position as to be deleted.\n Shortcut: {{hotkeyName}}.",
+      "deleteByMerge-tooltip": "Remove the chapter at the current position.\n Shortcut: {{hotkeyName}}",
+      "deleteByMerge-tooltip-aria": "Remove the chapter at the current position.\n Shortcut: {{hotkeyName}}.",
       "merge-all-button": "Merge All",
       "merge-all-tooltip": "Combine all segments into a single segment.",
       "merge-all-tooltip-aria": "Merge All. Combine all segments into a single segment.",
       "delete-all-button": "Delete All",
-      "delete-all-tooltip": "Remove all segments.",
-      "delete-all-tooltip-aria": "Delete All. Remove all segments.",
+      "delete-all-tooltip": "Remove all chapters.",
+      "delete-all-tooltip-aria": "Delete All. Remove all chapters.",
       "restore-button": "Restore",
       "mergeLeft-button": "Merge Left",
-      "mergeLeft-tooltip": "Combine the currently active segment with the segment to its left.\n Hotkey: {{hotkeyName}}",
-      "mergeLeft-tooltip-aria": "Merge Left. Combine the currently active segment with the segment to its left.\n Hotkey: {{hotkeyName}}.",
+      "mergeLeft-tooltip": "Combine the currently active segment with the segment to its left.\n Shortcut: {{hotkeyName}}",
+      "mergeLeft-tooltip-aria": "Merge Left. Combine the currently active segment with the segment to its left.\n Shortcut: {{hotkeyName}}.",
       "mergeRight-button": "Merge Right",
-      "mergeRight-tooltip": "Combine the currently active segment with the segment to its right.\n Hotkey: {{hotkeyName}}",
-      "mergeRight-tooltip-aria": "Merge Right. Combine the currently active segment with the segment to its right.\n Hotkey: {{hotkeyName}}.",
+      "mergeRight-tooltip": "Combine the currently active segment with the segment to its right.\n Shortcut: {{hotkeyName}}",
+      "mergeRight-tooltip-aria": "Merge Right. Combine the currently active segment with the segment to its right.\n Shortcut: {{hotkeyName}}.",
       "zoom": "Zoom",
-      "zoomSlider-aria": "Zoom. Zoom in or out of the timeline. Hotkey for Zoom in: {{hotkeyNameIn}}. Hotkey for Zoom out: {{hotkeyNameOut}}.",
-      "zoomSlider-tooltip": "Zoom in or out of the timeline. Hotkey for Zoom in: {{hotkeyNameIn}}. Hotkey for Zoom out: {{hotkeyNameOut}}.",
+      "zoomSlider-aria": "Zoom. Zoom in or out of the timeline. Shortcut for Zoom in: {{hotkeyNameIn}}. Shortcut for Zoom out: {{hotkeyNameOut}}.",
+      "zoomSlider-tooltip": "Zoom in or out of the timeline. Shortcut for Zoom in: {{hotkeyNameIn}}. Shortcut for Zoom out: {{hotkeyNameOut}}.",
       "zoomIn": "Zoom in",
       "zoomOut": "Zoom out"
     },
 
     "video": {
       "previewButton": "Preview Mode",
-      "previewButton-tooltip-on": "Skips deleted segments when playing the video. Currently on. \n Hotkey: {{hotkeyName}}",
-      "previewButton-tooltip-off": "Skips deleted segments when playing the video. Currently off. \n Hotkey: {{hotkeyName}}",
-      "previewButton-aria": "Enable or disable preview mode. \n Hotkey: {{hotkeyName}}.",
+      "previewButton-tooltip-on": "Skips deleted segments when playing the video. Currently on. \n Shortcut: {{hotkeyName}}",
+      "previewButton-tooltip-off": "Skips deleted segments when playing the video. Currently off. \n Shortcut: {{hotkeyName}}",
+      "previewButton-aria": "Enable or disable preview mode. \n Shortcut: {{hotkeyName}}.",
       "playButton-tooltip": "Play video",
       "pauseButton-tooltip": "Pause video",
       "previousButton": "Back",
-      "previousButton-tooltip": "Back.\n Hotkey: {{hotkeyName}}.",
+      "previousButton-tooltip": "Back.\n Shortcut: {{hotkeyName}}.",
       "nextButton": "Forward",
-      "nextButton-tooltip": "Forward.\n Hotkey: {{hotkeyName}}.",
+      "nextButton-tooltip": "Forward.\n Shortcut: {{hotkeyName}}.",
       "current-time-tooltip": "Current time",
       "time-duration-tooltip": "Video duration",
       "duration-aria": "Duration",
@@ -66,49 +83,14 @@
       "presenter-tooltip": "Video Presenters"
     },
 
-    "finishMenu": {
-      "save-button": "Save changes",
-      "start-button": "Save and process changes",
-      "discard-button": "Discard changes"
-    },
-
-    "save": {
-      "headline-text": "Save current project",
-      "confirm-button": "Yes, save changes",
-      "confirmButton-attempting-tooltip": "Attempting to save",
-      "confirmButton-success-tooltip": "Saved successfully",
-      "confirmButton-failed-tooltip": "Save failed",
-      "info-text": "The video will not be processed but all cutting information will be stored in Opencast. You can continue your edit later.",
-      "success-text": "Changes saved successfully! You can now close the editor or continue working.",
-      "success-tooltip-aria": "Saved successfully",
-      "saveArea-tooltip": "Save Area",
-      "confirm-success": "Okay",
-      "cancel-save": "Don't save"
-    },
-
-    "discard": {
-      "headline-text": "Discard changes",
-      "confirm-button": "Yes, discard changes",
-      "info-text": "Are you sure you want to discard your changes? This cannot be undone!"
-    },
-
     "theEnd": {
-      "discarded-text": "Your changes have been discarded. You can now close the editor.",
-      "startOver-button": "Let me start over!",
-      "startOver-tooltip": "Reload the page to start over",
       "info-text": "Changes successfully saved to Opencast. Processing your changes may take quite some time so please be patient. You can now close the editor.\n"
     },
 
     "workflowSelection": {
-      "saveAndProcess-text": "Save and Process",
-      "selectWF-text": "Select a workflow",
       "noWorkflows-text": "There are no workflows to process your changes with. Please save your changes and contact an administrator.\n",
       "oneWorkflow-text": "The changes will be saved and the video will be cut and processed with the workflow \"{{workflow}}\". <3/> This will take some time.\n",
       "manyWorkflows-text": "Select which workflow Opencast should use for processing.",
-      "startProcessing-button": "Start processing",
-      "back-button": "Take me back",
-      "selectWF-button": "Click to select this workflow",
-      "selectWF-button-aria": "Press to select the workflow: {{stateName}}\n",
       "error-segmentsTooShort": "The remaining cutting segments are too short. Make sure that at least one segment is at least 2 seconds long. If you are trying to remove the video track, use the track selection menu."
     },
 
@@ -118,12 +100,6 @@
       "scrubber-text-aria": "Timeline marker. {{currentTime}}. Active segment: {{segment}}. {{segmentStatus}}. Controls: {{moveLeft}} and {{moveRight}} to move the timeline marker. {{increase}} and {{decrease}} to increase/decrease the move delta.\n",
       "segments-text-aria": "Segment {{index}}. {{segmentStatus}}. Start: {{start}}. End: {{end}}.\n",
       "cut-text-aria": "Cut marker. {{time}}. Between segment {{leftSegment}} and {{rightSegment}}.\n"
-    },
-
-    "workflowConfig": {
-      "headline-text": "Workflow Configuration",
-      "satisfied-text": "Satisfied with your configuration?",
-      "confirm-button": "Yes, start processing"
     },
 
     "metadata": {
@@ -197,11 +173,17 @@
 
     "thumbnail": {
       "title": "Thumbnail Editor",
+      "selectTrack-label": "Select a track",
+      "current-title": "Current thumbnail for {{track}}",
+      "new-title": "New thumbnail from {{track}} video",
+      "generated-text": "A thumbnail has been successfully generated",
       "noThumbnailAvailable": "No Thumbnail available",
       "previewImageAlt": "Thumbnail for track",
-      "buttonGenerate": "Generate from frame",
+      "buttonGenerate": "Generate from video",
       "buttonGenerate-tooltip": "Generate a new thumbnail from the current timeline marker position",
       "buttonGenerate-tooltip-aria": "Generate a new thumbnail from the current timeline marker position",
+      "buttonGoToGeneration-tooltip": "Go to generation",
+      "buttonGoToGeneration-tooltip-aria": "Go to generation",
       "buttonUpload": "Upload image",
       "buttonUpload-tooltip": "Upload an image",
       "buttonUpload-tooltip-aria": "Upload an image",
@@ -211,19 +193,10 @@
       "buttonDiscard": "Discard",
       "buttonDiscard-tooltip": "Discard the thumbnail for this track",
       "buttonDiscard-tooltip-aria": "Discard the thumbnail for this track",
-      "buttonGenerateAll": "Generate All",
-      "buttonGenerateAll-tooltip": "Generate new thumbnails for all tracks from the current timeline marker position",
-      "buttonGenerateAll-tooltip-aria": "Generate new thumbnails for all tracks from the current timeline marker position",
-      "explanation": "Upload or generate a thumbnail for each track.",
       "primary": "Primary",
       "secondary": "Secondary",
       "backButton": "Back",
       "backButton-tooltip": "Return to thumbnail selection"
-    },
-
-    "thumbnailSimple": {
-      "rowTitle": "Change thumbnail here",
-      "from": "from"
     },
 
     "error": {
@@ -248,7 +221,6 @@
     "various": {
       "error-details-text": "Details: {{errorMessage}}\n",
       "error-text": "An error has occurred. Please wait a bit and try again.",
-      "goBack-button": "No, take me back",
       "callback-button-system": "Back to {{system}}",
       "callback-button-generic": "Back to previous system"
     },
@@ -325,7 +297,12 @@
     },
 
     "subtitleVideoArea": {
-      "selectVideoLabel": "Video Flavors"
+      "view-label": "View",
+      "viewBoth-button": "Both",
+      "viewAll-button": "All",
+      "previousPage-button": "Previous videos",
+      "nextPage-button": "Next videos",
+      "pageStatus": "{{first}}–{{last}} of {{total}}"
     },
 
     "subtitleTimeline": {
@@ -337,7 +314,7 @@
     },
 
     "keyboardControls": {
-      "header": "Hotkeys",
+      "header": "Shortcuts",
       "defaultGroupName": "General",
       "missingLabel": "Unknown",
       "groupVideoPlayer": "Video Player",
@@ -355,15 +332,15 @@
       "alreadyInUse": "Key sequence is already in use. Please choose a different sequence.",
       "containsPlus": "The '+' character is not allowed. Please choose a different sequence",
       "changeModal": {
-        "title": "Change hotkey: {{name}}",
-        "info": "Record a new hotkey sequence by pressing the keys you want. Maximum are 3 keys.",
+        "title": "Change shortcut: {{name}}",
+        "info": "Record a new shortcut sequence by pressing the keys you want. Maximum are 3 keys.",
         "recordedKeys": "Recorded keys: ",
         "save": "Save",
         "discard": "Discard"
       },
       "deleteModal": {
-        "title": "Delete hotkey: {{name}}",
-        "info": "Unsets the hotkey, rendering it unusable.",
+        "title": "Delete shortcut: {{name}}",
+        "info": "Unsets the shortcut, rendering it unusable.",
         "confirm": "Confirm",
         "cancel": "Cancel"
       }
