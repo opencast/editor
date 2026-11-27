@@ -127,7 +127,7 @@ interface VideoPlayerProps {
   subtitleUrl: string,
   first: boolean,
   last: boolean,
-  overwritePlayerCSS?: SerializedStyles,
+  overwritePlayerCSS?: SerializedStyles | SerializedStyles[],
   audioOnly?: boolean,
   selectIsPlaying: (state: RootState) => boolean,
   selectIsMuted: (state: RootState) => boolean,

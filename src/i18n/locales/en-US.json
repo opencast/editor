@@ -297,7 +297,12 @@
     },
 
     "subtitleVideoArea": {
-      "selectVideoLabel": "Tracks"
+      "view-label": "View",
+      "viewBoth-button": "Both",
+      "viewAll-button": "All",
+      "previousPage-button": "Previous videos",
+      "nextPage-button": "Next videos",
+      "pageStatus": "{{first}}–{{last}} of {{total}}"
     },
 
     "subtitleTimeline": {
